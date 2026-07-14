@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#020b15">
+  <title>RavenBill 2.0</title>
+  <style>
+    html,body{margin:0;min-height:100%;background:#020b15;color:#f7f9fc;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+    .loading{min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px}
+    .loading strong{font-family:Georgia,"Times New Roman",serif;font-size:30px}.loading strong span{color:#0f7fff}.loading small{display:block;margin-top:10px;color:#8fa2b6}
+  </style>
+</head>
+<body>
+  <div class="loading"><div><strong>RAVEN<span>BILL</span> 2.0</strong><small>Loading your bill tracker…</small></div></div>
+  <script>
+    (async () => {
+      try {
+        const response = await fetch('/index.html?source=shell&version=40', { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Could not load RavenBill (${response.status})`);
+        const source = await response.text();
+        const doc = new DOMParser().parseFromString(source, 'text/html');
+
+        doc.title = 'RavenBill 2.0';
+
+        const oldBrandImages = doc.querySelectorAll('.brand img, .brand-raven, .raven-quote img, .quote img');
+        oldBrandImages.forEach((image) => image.remove());
+
+        const brand = doc.querySelector('.brand');
+        if (brand) {
+          let wordmark = brand.querySelector('.brand-name, .brand-word, .wordmark');
+          if (!wordmark) {
+            wordmark = doc.createElement('span');
+            wordmark.className = 'brand-name';
+            brand.prepend(wordmark);
+          }
+          wordmark.innerHTML = 'RAVEN<span>BILL</span><sup>2.0</sup>';
+
+          let subtitle = brand.querySelector('small');
+          if (!subtitle) {
+            subtitle = doc.createElement('small');
+            brand.appendChild(subtitle);
+          }
+          subtitle.textContent = 'BILL TRACKER';
+        }
+
+        doc.querySelectorAll('.mobile-head img, .mobile-brand img').forEach((image) => {
+          image.src = '/rb-icon.svg?v=40';
+          image.alt = 'RavenBill RB';
+        });
+
+        doc.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]').forEach((link) => {
+          link.href = '/rb-icon.svg?v=40';
+          link.type = 'image/svg+xml';
+        });
+
+        let appleTitle = doc.querySelector('meta[name="apple-mobile-web-app-title"]');
+        if (!appleTitle) {
+          appleTitle = doc.createElement('meta');
+          appleTitle.name = 'apple-mobile-web-app-title';
+          doc.head.appendChild(appleTitle);
+        }
+        appleTitle.content = 'RavenBill 2.0';
+
+        const manifest = doc.querySelector('link[rel="manifest"]');
+        if (manifest) manifest.href = '/manifest.webmanifest?v=40';
+
+        const overrides = doc.createElement('link');
+        overrides.rel = 'stylesheet';
+        overrides.href = '/brand-overrides.css?v=40';
+        doc.head.appendChild(overrides);
+
+        const html = '<!doctype html>\n' + doc.documentElement.outerHTML
+          .replaceAll('/raven-logo.svg?v=30', '/rb-icon.svg?v=40')
+          .replaceAll('/raven-logo.svg', '/rb-icon.svg?v=40')
+          .replaceAll('/ravenbill-mobile-icon.svg', '/rb-icon.svg?v=40');
+
+        document.open();
+        document.write(html);
+        document.close();
+      } catch (error) {
+        document.body.innerHTML = `<div class="loading"><div><strong>RAVEN<span>BILL</span> 2.0</strong><small>${error.message}</small></div></div>`;
+      }
+    })();
+  </script>
+</body>
+</html>
