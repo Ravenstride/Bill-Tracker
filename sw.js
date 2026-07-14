@@ -1,10 +1,10 @@
-const CACHE = "ravenbill-final-v31";
+const CACHE = "ravenbill-rb-v40";
 const ASSETS = [
-  "/",
+  "/shell.html",
   "/index.html",
-  "/raven-logo.svg?v=31",
-  "/ravenbill-mobile-icon.svg?v=31",
-  "/manifest.webmanifest?v=31"
+  "/brand-overrides.css?v=40",
+  "/rb-icon.svg?v=40",
+  "/manifest.webmanifest?v=40"
 ];
 
 self.addEventListener("install", (event) => {
@@ -22,6 +22,7 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+
   event.respondWith(
     fetch(event.request, { cache: "no-store" })
       .then((response) => {
@@ -29,7 +30,10 @@ self.addEventListener("fetch", (event) => {
         caches.open(CACHE).then((cache) => cache.put(event.request, copy));
         return response;
       })
-      .catch(() => caches.match(event.request).then((cached) => cached || caches.match("/index.html")))
+      .catch(() => {
+        if (event.request.mode === "navigate") return caches.match("/shell.html");
+        return caches.match(event.request);
+      })
   );
 });
 
