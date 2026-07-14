@@ -3,21 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#07111f">
+  <meta name="theme-color" content="#04101e">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="RavenBill">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>RavenBill</title>
-  <link rel="manifest" href="/manifest.webmanifest?v=8">
-  <link rel="icon" href="/raven-logo.svg?v=8" type="image/svg+xml">
-  <link rel="stylesheet" href="/styles.css?v=8">
+  <link rel="manifest" href="/manifest.webmanifest?v=9">
+  <link rel="icon" href="/raven-logo.svg?v=9" type="image/svg+xml">
+  <link rel="apple-touch-icon" sizes="180x180" href="/raven-logo.svg?v=9">
+  <link rel="stylesheet" href="/styles.css?v=9">
 </head>
-<body>
+<body data-page="dashboard">
   <div class="app-shell">
     <aside class="sidebar">
       <button class="brand" data-page="dashboard" aria-label="Open dashboard">
-        <span class="brand-mark"><img src="/raven-logo.svg?v=8" alt=""></span>
-        <span><strong>Raven<span>Bill</span></strong><small>PERSONAL ORGANIZER</small></span>
+        <img class="brand-raven" src="/raven-logo.svg?v=9" alt="RavenBill raven">
+        <span class="brand-word">RAVEN<span>BILL</span></span>
+        <small>BILL TRACKER</small>
       </button>
 
       <nav class="side-nav" aria-label="Main navigation">
@@ -29,16 +32,21 @@
         <button class="nav-link" data-page="history"><span>↺</span>History</button>
       </nav>
 
+      <div class="raven-quote">
+        <img src="/raven-logo.svg?v=9" alt="">
+        <p>“Stay organized.<br><span>Stay ahead.</span>”</p>
+      </div>
+
       <div class="sidebar-note">
         <strong>Stored on this device</strong>
         <span>Use Backup to save a copy of your data.</span>
-        <button id="backupBtn" class="secondary-btn">Backup data</button>
+        <button id="backupBtn" class="secondary-btn">⇧ Backup data</button>
       </div>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
-        <div>
+        <div class="page-heading">
           <p class="eyebrow" id="pageEyebrow">PERSONAL BILL ORGANIZER</p>
           <h1 id="pageTitle">Dashboard</h1>
           <p id="pageSubtitle">Stay ahead of bills and appointments.</p>
@@ -51,49 +59,63 @@
       </header>
 
       <section class="page active" id="dashboardPage">
-        <div class="dashboard-grid">
-          <section class="hero-card">
-            <div class="hero-copy">
-              <div class="hero-icon"><img src="/raven-logo.svg?v=8" alt=""></div>
-              <p class="eyebrow light">MONTHLY OVERVIEW</p>
-              <h2>Everything in one place.</h2>
-              <p>Your bills, appointments, and reminders for the selected month.</p>
-            </div>
+        <section class="overview-panel">
+          <div class="progress-column">
             <div class="hero-ring" id="progressRing" style="--progress:0">
               <div><strong id="progressPercent">0%</strong><span>BILLS PAID</span></div>
             </div>
-          </section>
+          </div>
 
-          <section class="summary-column">
-            <div class="summary-card"><span>Total bills</span><strong id="summaryBillCount">0</strong></div>
-            <div class="summary-card"><span>Remaining</span><strong id="summaryRemaining">$0.00</strong></div>
-            <div class="summary-card"><span>Appointments</span><strong id="summaryAppointments">0</strong></div>
-          </section>
-        </div>
-
-        <section class="stat-grid">
-          <article class="stat-card"><span>Total this month</span><strong id="totalAmount">$0.00</strong><small id="totalBillsCaption">0 bills</small></article>
-          <article class="stat-card"><span>Paid</span><strong class="green" id="paidAmount">$0.00</strong><small id="paidBillsCaption">0 completed</small></article>
-          <article class="stat-card"><span>Due soon</span><strong class="amber" id="dueSoonCount">0</strong><small>Within 7 days</small></article>
-          <article class="stat-card"><span>Overdue</span><strong class="red" id="overdueCount">0</strong><small>Needs attention</small></article>
+          <div class="overview-body">
+            <div class="overview-metrics">
+              <article><span class="metric-icon blue">▤</span><strong id="summaryBillCount">0</strong><small>Total Bills</small></article>
+              <article><span class="metric-icon green">✓</span><strong id="summaryPaidCount">0</strong><small>Paid</small></article>
+              <article><span class="metric-icon amber">◷</span><strong id="summaryDueSoonCount">0</strong><small>Due Soon</small></article>
+              <article><span class="metric-icon red">!</span><strong id="summaryOverdueCount">0</strong><small>Overdue</small></article>
+            </div>
+            <div class="overview-finance">
+              <article><span class="finance-icon">$</span><div><strong id="topPaidAmount">$0.00</strong><small>Paid</small></div></article>
+              <article><span class="finance-icon">$</span><div><strong id="summaryRemaining">$0.00</strong><small>Remaining</small></div></article>
+              <article><span class="finance-icon">▦</span><div><strong id="nextDueDateVisual">—</strong><small>Next Due Date</small></div></article>
+            </div>
+          </div>
+          <span id="summaryAppointments" hidden>0</span>
         </section>
 
-        <section class="content-grid">
-          <article class="panel">
-            <div class="panel-heading">
-              <div><p class="eyebrow">UP NEXT</p><h3>Bills needing attention</h3></div>
-              <button class="text-button" data-page="bills">View all</button>
-            </div>
-            <div id="dashboardBillList" class="stack-list"></div>
+        <section class="stat-grid compact-stats">
+          <article class="stat-card"><span>Total this month</span><strong id="totalAmount">$0.00</strong><small id="totalBillsCaption">0 bills</small></article>
+          <article class="stat-card"><span>Paid</span><strong class="green-text" id="paidAmount">$0.00</strong><small id="paidBillsCaption">0 completed</small></article>
+          <article class="stat-card"><span>Due soon</span><strong class="amber-text" id="dueSoonCount">0</strong><small>Within 7 days</small></article>
+          <article class="stat-card"><span>Overdue</span><strong class="red-text" id="overdueCount">0</strong><small>Needs attention</small></article>
+        </section>
+
+        <section class="glance-grid">
+          <article class="panel glance-card today-card">
+            <div class="panel-heading"><div><p class="eyebrow red-label">DUE TODAY</p><h3>Today</h3></div><span class="count-badge red-badge" id="todayCount">0</span></div>
+            <div id="dueTodayList" class="stack-list"></div>
           </article>
-          <article class="panel">
-            <div class="panel-heading">
-              <div><p class="eyebrow">PERSONAL SCHEDULE</p><h3>Upcoming appointments</h3></div>
-              <button class="text-button" data-page="schedule">Open schedule</button>
-            </div>
+          <article class="panel glance-card">
+            <div class="panel-heading"><div><p class="eyebrow amber-label">DUE THIS WEEK</p><h3>Coming up</h3></div><span class="count-badge amber-badge" id="weekCount">0</span></div>
+            <div id="dueWeekList" class="stack-list"></div>
+          </article>
+          <article class="panel glance-card">
+            <div class="panel-heading"><div><p class="eyebrow red-label">OVERDUE</p><h3>Needs attention</h3></div><span class="count-badge red-badge" id="overdueVisualCount">0</span></div>
+            <div id="overdueVisualList" class="stack-list"></div>
+          </article>
+        </section>
+
+        <section class="lower-grid">
+          <article class="panel category-panel">
+            <div class="panel-heading"><div><p class="eyebrow">SPENDING BY CATEGORY</p><h3>This month</h3></div></div>
+            <div id="categorySummary" class="category-strip"></div>
+          </article>
+          <article class="panel schedule-preview">
+            <div class="panel-heading"><div><p class="eyebrow">PERSONAL SCHEDULE</p><h3>Upcoming appointments</h3></div><button class="text-button" data-page="schedule">Open schedule</button></div>
             <div id="dashboardAppointmentList" class="stack-list"></div>
           </article>
         </section>
+
+        <div id="dashboardBillList" class="source-list" aria-hidden="true"></div>
       </section>
 
       <section class="page" id="billsPage">
@@ -135,13 +157,12 @@
             <div class="reminder-bell">◉</div>
             <p class="eyebrow light">PHONE REMINDERS</p>
             <h2>Never miss a bill or appointment.</h2>
-            <p>Download RavenBill reminders into your phone calendar for dependable alerts, even when RavenBill is closed.</p>
+            <p>Add RavenBill reminders to your phone calendar for dependable alerts, even when RavenBill is closed.</p>
             <div class="reminder-actions">
-              <button class="primary-btn light-btn" id="calendarExportBtn">Add next 12 months to phone calendar</button>
-              <button class="secondary-btn dark-secondary" id="selectedMonthCalendarBtn">Add selected month only</button>
+              <button class="primary-btn light-btn" id="calendarExportBtn">Add next 12 months</button>
+              <button class="secondary-btn dark-secondary" id="selectedMonthCalendarBtn">Add selected month</button>
             </div>
           </article>
-
           <article class="panel settings-panel">
             <div class="panel-heading"><div><p class="eyebrow">DEFAULT SETTINGS</p><h3>Reminder timing</h3></div></div>
             <div class="settings-form">
@@ -153,7 +174,6 @@
             </div>
           </article>
         </section>
-
         <section class="content-grid reminder-content-grid">
           <article class="panel">
             <div class="panel-heading"><div><p class="eyebrow">RAVENBILL ALERTS</p><h3>On-device notifications</h3></div><span id="notificationStatus" class="status-badge">Not enabled</span></div>
@@ -184,6 +204,16 @@
         </section>
       </section>
     </main>
+
+    <aside class="right-rail" aria-label="Upcoming bills">
+      <div class="rail-tools">
+        <label class="search-box"><span>⌕</span><input id="railSearch" type="search" placeholder="Search bills..."></label>
+        <button class="rail-icon" data-page="reminders" aria-label="Open reminders">♢</button>
+      </div>
+      <div class="rail-heading"><h2>UPCOMING BILLS</h2><select id="railFilter"><option value="all">All</option><option value="unpaid">Unpaid</option><option value="paid">Paid</option><option value="autopay">Autopay</option></select></div>
+      <div id="upcomingBillsRail" class="rail-list"></div>
+      <button class="rail-add" id="railAddBill">+</button>
+    </aside>
   </div>
 
   <button class="floating-add" id="floatingAdd" aria-label="Add item">+</button>
@@ -198,26 +228,14 @@
 
   <dialog id="billDialog">
     <form id="billForm">
-      <div class="dialog-header">
-        <div><p class="eyebrow" id="billDialogEyebrow">MONTHLY BILL</p><h2 id="billDialogTitle">Add bill</h2></div>
-        <button type="button" class="icon-button" data-close="billDialog">✕</button>
-      </div>
+      <div class="dialog-header"><div><p class="eyebrow" id="billDialogEyebrow">MONTHLY BILL</p><h2 id="billDialogTitle">Add bill</h2></div><button type="button" class="icon-button" data-close="billDialog">✕</button></div>
       <div class="dialog-body">
         <label>Common bill<select id="billPreset"></select></label>
         <label>Bill name<input id="billName" required maxlength="70" placeholder="Electric, Mortgage, Insurance..."></label>
-        <div class="form-row">
-          <label>Amount<input id="billAmount" required type="number" min="0" step="0.01" placeholder="0.00"></label>
-          <label>Due day<input id="billDueDay" required type="number" min="1" max="31" placeholder="15"></label>
-        </div>
-        <div class="form-row">
-          <label>Category<select id="billCategory"></select></label>
-          <label>Frequency<select id="billFrequency"><option value="monthly">Monthly</option><option value="yearly">Yearly</option><option value="one-time">One-time</option></select></label>
-        </div>
+        <div class="form-row"><label>Amount<input id="billAmount" required type="number" min="0" step="0.01" placeholder="0.00"></label><label>Due day<input id="billDueDay" required type="number" min="1" max="31" placeholder="15"></label></div>
+        <div class="form-row"><label>Category<select id="billCategory"></select></label><label>Frequency<select id="billFrequency"><option value="monthly">Monthly</option><option value="yearly">Yearly</option><option value="one-time">One-time</option></select></label></div>
         <label id="yearlyMonthWrap" hidden>Month paid each year<select id="billYearlyMonth"></select></label>
-        <div class="form-row">
-          <label>Reminder<select id="billReminderDays"><option value="-1">No reminder</option><option value="0">On due date</option><option value="1">1 day before</option><option value="3">3 days before</option><option value="7">7 days before</option></select></label>
-          <label class="check-line card-check"><input id="billAutopay" type="checkbox"> Autopay</label>
-        </div>
+        <div class="form-row"><label>Reminder<select id="billReminderDays"><option value="-1">No reminder</option><option value="0">On due date</option><option value="1">1 day before</option><option value="3">3 days before</option><option value="7">7 days before</option></select></label><label class="check-line card-check"><input id="billAutopay" type="checkbox"> Autopay</label></div>
       </div>
       <div class="dialog-actions"><button type="button" class="secondary-btn" data-close="billDialog">Cancel</button><button type="submit" class="primary-btn">Save bill</button></div>
     </form>
@@ -225,10 +243,7 @@
 
   <dialog id="appointmentDialog">
     <form id="appointmentForm">
-      <div class="dialog-header">
-        <div><p class="eyebrow">PERSONAL SCHEDULE</p><h2 id="appointmentDialogTitle">Add appointment</h2></div>
-        <button type="button" class="icon-button" data-close="appointmentDialog">✕</button>
-      </div>
+      <div class="dialog-header"><div><p class="eyebrow">PERSONAL SCHEDULE</p><h2 id="appointmentDialogTitle">Add appointment</h2></div><button type="button" class="icon-button" data-close="appointmentDialog">✕</button></div>
       <div class="dialog-body">
         <label>Appointment title<input id="appointmentTitle" required maxlength="80" placeholder="Doctor, haircut, dinner..."></label>
         <div class="form-row"><label>Date<input id="appointmentDate" required type="date"></label><label>Time<input id="appointmentTime" type="time"></label></div>
@@ -240,6 +255,76 @@
     </form>
   </dialog>
 
-  <script defer src="/app.js?v=8"></script>
+  <script defer src="/app.js?v=9"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const money = new Intl.NumberFormat("en-US", { style:"currency", currency:"USD" });
+      const icons = {Housing:"⌂",Utilities:"⚡",Transportation:"🚗",Debt:"▣",Insurance:"◆",Healthcare:"✚",Subscriptions:"▶",Family:"●",Pets:"🐾",Savings:"$",Taxes:"%",Other:"•"};
+      const source = document.getElementById("dashboardBillList");
+      const getState = () => { try { return JSON.parse(localStorage.getItem("ravenbill.v7")) || {}; } catch { return {}; } };
+      const getMonthKey = () => {
+        const label = document.getElementById("monthLabel").textContent.trim();
+        const date = new Date(`${label} 1`);
+        return Number.isNaN(date.getTime()) ? "" : `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}`;
+      };
+      const statusFor = (bill, key) => {
+        if (bill.paid) return {text:"PAID",cls:"paid"};
+        const now = new Date();
+        const currentKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
+        if (key !== currentKey) return {text:"UPCOMING",cls:"upcoming"};
+        const [year,month] = key.split("-").map(Number);
+        const last = new Date(year,month,0).getDate();
+        const due = new Date(year,month-1,Math.min(Number(bill.dueDay),last)); due.setHours(0,0,0,0);
+        const today = new Date(); today.setHours(0,0,0,0);
+        const days = Math.ceil((due-today)/86400000);
+        if (days < 0) return {text:`OVERDUE ${Math.abs(days)} DAYS`,cls:"overdue"};
+        if (days === 0) return {text:"DUE TODAY",cls:"due-soon"};
+        if (days <= 7) return {text:`DUE IN ${days} DAY${days===1?"":"S"}`,cls:"due-soon"};
+        return {text:"UPCOMING",cls:"upcoming"};
+      };
+      const billRow = (bill,status) => `<div class="rail-bill"><span class="rail-bill-icon ${status.cls}">${icons[bill.category]||"•"}</span><div><strong>${String(bill.name).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}</strong><small>Due ${bill.dueDay}</small></div><div class="rail-bill-side"><b>${money.format(Number(bill.amount||0))}</b><span class="rail-status ${status.cls}">${status.text}</span></div></div>`;
+      const empty = (text) => `<div class="empty-state mini-empty">${text}</div>`;
+      const refresh = () => {
+        const cards = [...source.querySelectorAll(".list-card")];
+        const today = cards.filter(card => card.querySelector(".status")?.textContent.includes("DUE TODAY"));
+        const week = cards.filter(card => card.querySelector(".status")?.classList.contains("due-soon") && !card.querySelector(".status")?.textContent.includes("DUE TODAY"));
+        const overdue = cards.filter(card => card.querySelector(".status")?.classList.contains("overdue"));
+        document.getElementById("dueTodayList").innerHTML = today.length ? today.slice(0,2).map(card=>card.outerHTML).join("") : empty("Nothing due today.");
+        document.getElementById("dueWeekList").innerHTML = week.length ? week.slice(0,3).map(card=>card.outerHTML).join("") : empty("Nothing due this week.");
+        document.getElementById("overdueVisualList").innerHTML = overdue.length ? overdue.slice(0,3).map(card=>card.outerHTML).join("") : empty("No overdue bills.");
+        document.getElementById("todayCount").textContent = today.length;
+        document.getElementById("weekCount").textContent = week.length;
+        document.getElementById("overdueVisualCount").textContent = overdue.length;
+
+        const state = getState(); const key = getMonthKey(); const bills = state.months?.[key]?.bills || [];
+        const paid = bills.filter(b=>b.paid); const dueSoon = bills.filter(b=>statusFor(b,key).cls==="due-soon"); const pastDue = bills.filter(b=>statusFor(b,key).cls==="overdue");
+        document.getElementById("summaryPaidCount").textContent = paid.length;
+        document.getElementById("summaryDueSoonCount").textContent = dueSoon.length;
+        document.getElementById("summaryOverdueCount").textContent = pastDue.length;
+        document.getElementById("topPaidAmount").textContent = document.getElementById("paidAmount").textContent;
+        const next = bills.filter(b=>!b.paid).sort((a,b)=>a.dueDay-b.dueDay)[0];
+        document.getElementById("nextDueDateVisual").textContent = next ? `${document.getElementById("monthLabel").textContent.split(" ")[0]} ${next.dueDay}` : "—";
+
+        const totals = {};
+        bills.forEach(b=>{ totals[b.category] = (totals[b.category]||0) + Number(b.amount||0); });
+        const categoryEntries = Object.entries(totals).sort((a,b)=>b[1]-a[1]).slice(0,6);
+        document.getElementById("categorySummary").innerHTML = categoryEntries.length ? categoryEntries.map(([category,total])=>`<article><span>${icons[category]||"•"}</span><strong>${category}</strong><b>${money.format(total)}</b><small>${bills.filter(x=>x.category===category).length} bill${bills.filter(x=>x.category===category).length===1?"":"s"}</small></article>`).join("") : empty("Add amounts to see category totals.");
+        renderRail();
+      };
+      const renderRail = () => {
+        const state = getState(); const key = getMonthKey(); let bills = [...(state.months?.[key]?.bills || [])].sort((a,b)=>a.dueDay-b.dueDay);
+        const search = document.getElementById("railSearch").value.trim().toLowerCase(); const filter = document.getElementById("railFilter").value;
+        bills = bills.filter(b => (!search || String(b.name).toLowerCase().includes(search)) && (filter==="all" || (filter==="paid"&&b.paid) || (filter==="unpaid"&&!b.paid) || (filter==="autopay"&&b.autopay)));
+        document.getElementById("upcomingBillsRail").innerHTML = bills.length ? bills.map(b=>billRow(b,statusFor(b,key))).join("") : empty("No bills match this view.");
+      };
+      new MutationObserver(refresh).observe(source,{childList:true,subtree:true});
+      new MutationObserver(refresh).observe(document.getElementById("monthLabel"),{childList:true,subtree:true,characterData:true});
+      document.getElementById("railSearch").addEventListener("input",renderRail);
+      document.getElementById("railFilter").addEventListener("change",renderRail);
+      document.getElementById("railAddBill").addEventListener("click",()=>document.getElementById("addBillButton").click());
+      document.querySelectorAll("[data-page]").forEach(button=>button.addEventListener("click",()=>{ document.body.dataset.page = button.dataset.page; }));
+      setTimeout(refresh,80);
+    });
+  </script>
 </body>
 </html>
