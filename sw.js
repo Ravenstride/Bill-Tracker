@@ -1,5 +1,5 @@
-const CACHE = "ravenbill-v7";
-const ASSETS = ["./","./index.html","./styles.css","./app.js","./raven-logo.svg","./manifest.webmanifest"];
+const CACHE = "ravenbill-v9";
+const ASSETS = ["/","/index.html","/styles.css?v=9","/app.js?v=9","/raven-logo.svg?v=9","/manifest.webmanifest?v=9"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS)));
@@ -16,11 +16,13 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request).then((response) => {
-      const copy = response.clone();
-      caches.open(CACHE).then((cache) => cache.put(event.request, copy));
-      return response;
-    }).catch(() => caches.match("./index.html")))
+    fetch(event.request)
+      .then((response) => {
+        const copy = response.clone();
+        caches.open(CACHE).then((cache) => cache.put(event.request, copy));
+        return response;
+      })
+      .catch(() => caches.match(event.request).then((cached) => cached || caches.match("/index.html")))
   );
 });
 
@@ -30,7 +32,7 @@ self.addEventListener("notificationclick", (event) => {
     clients.matchAll({ type:"window", includeUncontrolled:true }).then((windows) => {
       const existing = windows.find((client) => "focus" in client);
       if (existing) return existing.focus();
-      return clients.openWindow("./");
+      return clients.openWindow("/");
     })
   );
 });
