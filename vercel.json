@@ -1,11 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true,
-  "redirects": [
+  "cleanUrls": false,
+  "rewrites": [
     {
       "source": "/",
-      "destination": "/shell.html?v=41",
-      "permanent": false
+      "destination": "/shell.html"
     }
   ],
   "headers": [
@@ -19,6 +18,13 @@
     },
     {
       "source": "/shell.html",
+      "headers": [
+        { "key": "Content-Type", "value": "text/html; charset=utf-8" },
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    },
+    {
+      "source": "/index.html",
       "headers": [
         { "key": "Content-Type", "value": "text/html; charset=utf-8" },
         { "key": "Cache-Control", "value": "no-store, max-age=0" }
