@@ -1,8 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/", "destination": "/shell.html" }
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/shell.html?v=41",
+      "permanent": false
+    }
   ],
   "headers": [
     {
@@ -14,9 +18,9 @@
       ]
     },
     {
-      "source": "/brand-overrides.css",
+      "source": "/shell.html",
       "headers": [
-        { "key": "Content-Type", "value": "text/css; charset=utf-8" },
+        { "key": "Content-Type", "value": "text/html; charset=utf-8" },
         { "key": "Cache-Control", "value": "no-store, max-age=0" }
       ]
     },
