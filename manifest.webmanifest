@@ -1,12 +1,16 @@
 {
+  "id": "/",
   "name": "RavenBill",
   "short_name": "RavenBill",
-  "start_url": "./",
+  "start_url": "/?source=pwa",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#07111f",
-  "theme_color": "#07111f",
+  "orientation": "any",
+  "background_color": "#020b15",
+  "theme_color": "#04101e",
   "description": "A mobile-friendly personal bill tracker, schedule, and reminder center.",
   "icons": [
-    { "src": "raven-logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+    { "src": "/raven-logo.svg?v=9", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/raven-logo.svg?v=9", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
   ]
 }
