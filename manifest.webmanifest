@@ -10,7 +10,7 @@
   "theme_color": "#04101e",
   "description": "RavenBill 2.0 — a mobile-friendly bill tracker, schedule, and reminder center.",
   "icons": [
-    { "src": "/raven-logo.svg?v=10", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
-    { "src": "/raven-logo.svg?v=10", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+    { "src": "/ravenbill-2-icon.svg?v=11", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/ravenbill-2-icon.svg?v=11", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
   ]
 }
