@@ -1,10 +1,9 @@
-const CACHE = "ravenbill-rb-v40";
+const CACHE = "ravenbill-rb-final-v41";
 const ASSETS = [
-  "/shell.html",
-  "/index.html",
-  "/brand-overrides.css?v=40",
-  "/rb-icon.svg?v=40",
-  "/manifest.webmanifest?v=40"
+  "/shell.html?v=41",
+  "/index.html?application=1&version=41",
+  "/rb-icon.svg?v=41",
+  "/manifest.webmanifest?v=41"
 ];
 
 self.addEventListener("install", (event) => {
@@ -22,7 +21,6 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
-
   event.respondWith(
     fetch(event.request, { cache: "no-store" })
       .then((response) => {
@@ -30,10 +28,7 @@ self.addEventListener("fetch", (event) => {
         caches.open(CACHE).then((cache) => cache.put(event.request, copy));
         return response;
       })
-      .catch(() => {
-        if (event.request.mode === "navigate") return caches.match("/shell.html");
-        return caches.match(event.request);
-      })
+      .catch(() => caches.match(event.request).then((cached) => cached || caches.match("/shell.html?v=41")))
   );
 });
 
@@ -43,7 +38,7 @@ self.addEventListener("notificationclick", (event) => {
     clients.matchAll({ type: "window", includeUncontrolled: true }).then((windows) => {
       const existing = windows.find((client) => "focus" in client);
       if (existing) return existing.focus();
-      return clients.openWindow("/");
+      return clients.openWindow("/shell.html?v=41");
     })
   );
 });
