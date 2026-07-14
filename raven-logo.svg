@@ -1,30 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Blue raven emblem">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="RavenBill 2.0 heraldic raven emblem">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#06182a"/>
-      <stop offset="1" stop-color="#020a13"/>
+      <stop offset="0" stop-color="#10263b"/>
+      <stop offset=".52" stop-color="#071522"/>
+      <stop offset="1" stop-color="#020910"/>
     </linearGradient>
-    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#42a4ff"/>
-      <stop offset=".45" stop-color="#087cff"/>
-      <stop offset="1" stop-color="#064da9"/>
+    <linearGradient id="wing" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".62" stop-color="#eaf4ff"/>
+      <stop offset="1" stop-color="#a9d1ff"/>
     </linearGradient>
-    <linearGradient id="feather" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#092e67"/>
-      <stop offset="1" stop-color="#168cff"/>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#55b1ff"/>
+      <stop offset="1" stop-color="#0876ef"/>
     </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="13" flood-color="#000814" flood-opacity=".6"/>
+    </filter>
   </defs>
-  <rect width="512" height="512" rx="104" fill="url(#bg)"/>
-  <circle cx="256" cy="248" r="194" fill="none" stroke="#0c74ed" stroke-width="12" opacity=".95"/>
-  <circle cx="256" cy="248" r="177" fill="none" stroke="#143b70" stroke-width="3"/>
-  <path d="M119 393c11-89 47-179 117-241 45-40 104-59 159-42-28 4-52 17-69 37 42-6 78 10 100 43-27-8-54-8-78 0 25 8 45 24 59 48-38-12-76-5-104 18 28-2 55 7 75 26-42 0-80 17-105 49-31 39-69 65-117 78-14 4-26 0-37-16z" fill="url(#blue)"/>
-  <path d="M222 167c45-35 104-49 159-28-24 3-43 11-58 25 43-3 82 12 111 42-45-12-85-7-119 17-26 18-48 42-66 72-12-42-21-85-27-128z" fill="#03101e"/>
-  <path d="M331 183c33-18 70-20 106-5l-58 25 76 14-84 17c-8-21-21-38-40-51z" fill="#a8c9e9"/>
-  <path d="M370 204l85 13-84 17c5-11 5-20-1-30z" fill="#d9e8f5" opacity=".72"/>
-  <circle cx="343" cy="180" r="11" fill="#dff3ff"/>
-  <circle cx="346" cy="179" r="5" fill="#03101e"/>
-  <circle cx="348" cy="176" r="2" fill="#fff"/>
-  <path d="M150 372c33-16 66-42 91-75-9 42-33 81-70 111m-19-74c30-14 59-37 82-66-10 36-31 68-63 92m-4-80c29-13 56-32 79-58-9 31-28 59-55 81" fill="none" stroke="#73baff" stroke-width="10" stroke-linecap="round" opacity=".72"/>
-  <path d="M161 398c48-14 89-42 122-82-14 50-49 91-97 115m30-18c42-19 76-48 100-87-8 45-33 84-72 112" fill="none" stroke="url(#feather)" stroke-width="16" stroke-linecap="round"/>
-  <path d="M130 414c43-1 84-12 121-34-25 32-58 55-99 68" fill="none" stroke="#075fc8" stroke-width="18" stroke-linecap="round"/>
+  <rect width="512" height="512" rx="108" fill="url(#bg)"/>
+  <rect x="18" y="18" width="476" height="476" rx="92" fill="none" stroke="#183a58" stroke-width="3"/>
+  <g filter="url(#shadow)">
+    <path fill="url(#wing)" d="M245 219c-38 16-77 30-116 40-13 3-26 0-36-9-15-13-24-33-29-60l-11-67c23 12 42 29 55 49 8 12 13 25 16 39 16-36 26-77 30-123 34 30 55 68 62 114l29 17z"/>
+    <path fill="url(#wing)" d="M267 219c38 16 77 30 116 40 13 3 26 0 36-9 15-13 24-33 29-60l11-67c-23 12-42 29-55 49-8 12-13 25-16 39-16-36-26-77-30-123-34 30-55 68-62 114l-29 17z"/>
+    <path fill="url(#wing)" d="M114 249c17 10 38 13 62 9-7 22-8 46-4 72-26-9-47-28-58-56v-25zM398 249c-17 10-38 13-62 9 7 22 8 46 4 72 26-9 47-28 58-56v-25z"/>
+    <path fill="url(#wing)" d="M98 282c15 12 34 19 56 21-4 23-2 46 6 69-29-10-50-30-62-60v-30zM414 282c-15 12-34 19-56 21 4 23 2 46-6 69 29-10 50-30 62-60v-30z"/>
+    <path fill="url(#wing)" d="M112 334c15 8 31 12 50 12 0 23 5 43 15 61-27-7-49-23-65-49v-24zM400 334c-15 8-31 12-50 12 0 23-5 43-15 61 27-7 49-23 65-49v-24z"/>
+    <path fill="url(#wing)" d="M146 384c13 4 27 5 42 2 4 19 12 35 24 49-25-2-47-12-66-31v-20zM366 384c-13 4-27 5-42 2-4 19-12 35-24 49 25-2 47-12 66-31v-20z"/>
+    <path fill="url(#wing)" d="M256 166c-25 0-43 9-57 27l-18 25 27-8c-5 15-4 32 4 50 8 20 21 38 38 54l6 6 6-6c17-16 30-34 38-54 8-18 9-35 4-50l27 8-18-25c-14-18-32-27-57-27z"/>
+    <path fill="url(#wing)" d="M254 153c-8-13-20-22-35-27 19-6 39-3 59 8 10 6 20 14 28 25l-36 8c-7-7-12-11-16-14z"/>
+    <path fill="#07111f" d="M259 160c12-10 27-15 45-14-11 7-19 15-24 25l-21-11z"/>
+    <path fill="url(#accent)" d="M240 176l17-13 19 9-17 11z"/>
+    <circle cx="272" cy="158" r="4.5" fill="#ffffff"/>
+    <path fill="url(#wing)" d="M235 324l21 29 21-29 14 27-20 34-15-18-15 18-20-34 14-27z"/>
+    <path fill="url(#wing)" d="M256 382l24 38-24 54-24-54 24-38z"/>
+  </g>
 </svg>
