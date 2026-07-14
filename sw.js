@@ -1,5 +1,11 @@
-const CACHE = "ravenbill-final-v30";
-const ASSETS = ["/", "/index.html", "/raven-logo.svg?v=30", "/manifest.webmanifest?v=30"];
+const CACHE = "ravenbill-final-v31";
+const ASSETS = [
+  "/",
+  "/index.html",
+  "/raven-logo.svg?v=31",
+  "/ravenbill-mobile-icon.svg?v=31",
+  "/manifest.webmanifest?v=31"
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS)));
