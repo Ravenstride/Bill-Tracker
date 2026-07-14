@@ -1,8 +1,8 @@
 {
-  "id": "/ravenbill-2-rb",
+  "id": "/ravenbill-2-rb-v41",
   "name": "RavenBill 2.0",
   "short_name": "RavenBill",
-  "start_url": "/?source=pwa&version=40",
+  "start_url": "/shell.html?source=pwa&version=41",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
@@ -10,7 +10,7 @@
   "theme_color": "#020b15",
   "description": "RavenBill 2.0 personal bill tracker, schedule, reminders, reports, yearly bills, and autopay planner.",
   "icons": [
-    { "src": "/rb-icon.svg?v=40", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
-    { "src": "/rb-icon.svg?v=40", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+    { "src": "/rb-icon.svg?v=41", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/rb-icon.svg?v=41", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
   ]
 }
