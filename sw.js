@@ -1,4 +1,4 @@
-const CACHE = "ravenbill-2.0-v10";
+const CACHE = "ravenbill-2.0-v11";
 const ASSETS = ["/","/index.html","/styles.css?v=9","/app.js?v=9","/raven-logo.svg?v=10","/manifest.webmanifest?v=10"];
 
 self.addEventListener("install", (event) => {
