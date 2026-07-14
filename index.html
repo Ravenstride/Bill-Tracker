@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07111f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>RavenBill</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="raven-logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <button class="brand" data-page="dashboard" aria-label="Open dashboard">
+        <span class="brand-mark"><img src="raven-logo.svg" alt=""></span>
+        <span><strong>Raven<span>Bill</span></strong><small>PERSONAL ORGANIZER</small></span>
+      </button>
+
+      <nav class="side-nav" aria-label="Main navigation">
+        <button class="nav-link active" data-page="dashboard"><span>⌂</span>Dashboard</button>
+        <button class="nav-link" data-page="bills"><span>▤</span>Bills</button>
+        <button class="nav-link" data-page="schedule"><span>◫</span>Schedule</button>
+        <button class="nav-link" data-page="reminders"><span>◉</span>Reminders</button>
+        <button class="nav-link" data-page="template"><span>◇</span>Bill Template</button>
+        <button class="nav-link" data-page="history"><span>↺</span>History</button>
+      </nav>
+
+      <div class="sidebar-note">
+        <strong>Stored on this device</strong>
+        <span>Use Backup to save a copy of your data.</span>
+        <button id="backupBtn" class="secondary-btn">Backup data</button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow" id="pageEyebrow">PERSONAL BILL ORGANIZER</p>
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="pageSubtitle">Stay ahead of bills and appointments.</p>
+        </div>
+        <div class="month-control">
+          <button id="prevMonth" aria-label="Previous month">‹</button>
+          <strong id="monthLabel"></strong>
+          <button id="nextMonth" aria-label="Next month">›</button>
+        </div>
+      </header>
+
+      <section class="page active" id="dashboardPage">
+        <div class="dashboard-grid">
+          <section class="hero-card">
+            <div class="hero-copy">
+              <div class="hero-icon"><img src="raven-logo.svg" alt=""></div>
+              <p class="eyebrow light">MONTHLY OVERVIEW</p>
+              <h2>Everything in one place.</h2>
+              <p>Your bills, appointments, and reminders for the selected month.</p>
+            </div>
+            <div class="hero-ring" id="progressRing" style="--progress:0">
+              <div><strong id="progressPercent">0%</strong><span>BILLS PAID</span></div>
+            </div>
+          </section>
+
+          <section class="summary-column">
+            <div class="summary-card"><span>Total bills</span><strong id="summaryBillCount">0</strong></div>
+            <div class="summary-card"><span>Remaining</span><strong id="summaryRemaining">$0.00</strong></div>
+            <div class="summary-card"><span>Appointments</span><strong id="summaryAppointments">0</strong></div>
+          </section>
+        </div>
+
+        <section class="stat-grid">
+          <article class="stat-card"><span>Total this month</span><strong id="totalAmount">$0.00</strong><small id="totalBillsCaption">0 bills</small></article>
+          <article class="stat-card"><span>Paid</span><strong class="green" id="paidAmount">$0.00</strong><small id="paidBillsCaption">0 completed</small></article>
+          <article class="stat-card"><span>Due soon</span><strong class="amber" id="dueSoonCount">0</strong><small>Within 7 days</small></article>
+          <article class="stat-card"><span>Overdue</span><strong class="red" id="overdueCount">0</strong><small>Needs attention</small></article>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel">
+            <div class="panel-heading">
+              <div><p class="eyebrow">UP NEXT</p><h3>Bills needing attention</h3></div>
+              <button class="text-button" data-page="bills">View all</button>
+            </div>
+            <div id="dashboardBillList" class="stack-list"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-heading">
+              <div><p class="eyebrow">PERSONAL SCHEDULE</p><h3>Upcoming appointments</h3></div>
+              <button class="text-button" data-page="schedule">Open schedule</button>
+            </div>
+            <div id="dashboardAppointmentList" class="stack-list"></div>
+          </article>
+        </section>
+      </section>
+
+      <section class="page" id="billsPage">
+        <section class="panel page-panel">
+          <div class="panel-heading bills-heading">
+            <div><p class="eyebrow">MONTHLY BILL SHEET</p><h3 id="billsHeading">Bills</h3></div>
+            <div class="heading-actions">
+              <select id="billFilter" aria-label="Filter bills">
+                <option value="all">All bills</option><option value="unpaid">Unpaid</option><option value="paid">Paid</option>
+                <option value="dueSoon">Due soon</option><option value="overdue">Overdue</option>
+                <option value="monthly">Monthly bills</option><option value="yearly">Yearly bills</option><option value="autopay">Autopay</option>
+              </select>
+              <button class="primary-btn" id="addBillButton">+ Add bill</button>
+            </div>
+          </div>
+          <div id="billList" class="bill-grid"></div>
+        </section>
+      </section>
+
+      <section class="page" id="schedulePage">
+        <section class="panel page-panel">
+          <div class="panel-heading bills-heading">
+            <div><p class="eyebrow">MONTHLY AGENDA</p><h3>Appointments & personal schedule</h3></div>
+            <button class="primary-btn" id="addAppointmentButton">+ Add appointment</button>
+          </div>
+          <div class="schedule-layout">
+            <div class="mini-calendar">
+              <div class="weekday-row"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+              <div id="calendarGrid" class="calendar-grid"></div>
+            </div>
+            <div><div class="agenda-date" id="agendaDateLabel">Monthly agenda</div><div id="appointmentList" class="stack-list"></div></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="page" id="remindersPage">
+        <section class="reminder-grid">
+          <article class="panel reminder-hero">
+            <div class="reminder-bell">◉</div>
+            <p class="eyebrow light">PHONE REMINDERS</p>
+            <h2>Never miss a bill or appointment.</h2>
+            <p>Download RavenBill reminders into your phone calendar for dependable alerts, even when RavenBill is closed.</p>
+            <div class="reminder-actions">
+              <button class="primary-btn light-btn" id="calendarExportBtn">Add next 12 months to phone calendar</button>
+              <button class="secondary-btn dark-secondary" id="selectedMonthCalendarBtn">Add selected month only</button>
+            </div>
+          </article>
+
+          <article class="panel settings-panel">
+            <div class="panel-heading"><div><p class="eyebrow">DEFAULT SETTINGS</p><h3>Reminder timing</h3></div></div>
+            <div class="settings-form">
+              <label>Bill reminder<select id="defaultBillReminder"><option value="0">On due date</option><option value="1">1 day before</option><option value="3">3 days before</option><option value="7">7 days before</option></select></label>
+              <label>Appointment reminder<select id="defaultAppointmentReminder"><option value="15">15 minutes before</option><option value="60">1 hour before</option><option value="1440">1 day before</option><option value="2880">2 days before</option></select></label>
+              <label>Bill reminder time<input id="defaultReminderTime" type="time" value="09:00"></label>
+              <label class="check-line"><input id="overdueReminderToggle" type="checkbox"> Remind me about overdue bills when RavenBill opens</label>
+              <button class="primary-btn" id="saveReminderSettingsBtn">Save reminder settings</button>
+            </div>
+          </article>
+        </section>
+
+        <section class="content-grid reminder-content-grid">
+          <article class="panel">
+            <div class="panel-heading"><div><p class="eyebrow">RAVENBILL ALERTS</p><h3>On-device notifications</h3></div><span id="notificationStatus" class="status-badge">Not enabled</span></div>
+            <p class="panel-copy">These alerts appear while RavenBill is open or when you return to it. Phone calendar reminders are the reliable option when the app is closed.</p>
+            <div class="button-row"><button class="primary-btn" id="enableNotificationsBtn">Enable alerts</button><button class="secondary-btn" id="testNotificationBtn">Send test alert</button></div>
+          </article>
+          <article class="panel">
+            <div class="panel-heading"><div><p class="eyebrow">COMING UP</p><h3>Reminder preview</h3></div></div>
+            <div id="reminderPreviewList" class="stack-list"></div>
+          </article>
+        </section>
+      </section>
+
+      <section class="page" id="templatePage">
+        <section class="panel page-panel">
+          <div class="panel-heading bills-heading">
+            <div><p class="eyebrow">AUTOMATIC MONTH SETUP</p><h3>Common bill template</h3><p>Every unused month is populated from this list. Yearly bills appear only in their chosen month.</p></div>
+            <button class="primary-btn" id="addTemplateButton">+ Add template bill</button>
+          </div>
+          <div id="templateList" class="template-grid"></div>
+        </section>
+      </section>
+
+      <section class="page" id="historyPage">
+        <section class="panel page-panel">
+          <div class="panel-heading"><div><p class="eyebrow">PAST MONTHS</p><h3>Bill history</h3></div></div>
+          <div id="historyList" class="history-grid"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <button class="floating-add" id="floatingAdd" aria-label="Add item">+</button>
+
+  <nav class="bottom-nav" aria-label="Mobile navigation">
+    <button class="active" data-page="dashboard"><span>⌂</span>Home</button>
+    <button data-page="bills"><span>▤</span>Bills</button>
+    <button data-page="schedule"><span>◫</span>Schedule</button>
+    <button data-page="reminders"><span>◉</span>Alerts</button>
+    <button data-page="template"><span>◇</span>Template</button>
+  </nav>
+
+  <dialog id="billDialog">
+    <form id="billForm">
+      <div class="dialog-header">
+        <div><p class="eyebrow" id="billDialogEyebrow">MONTHLY BILL</p><h2 id="billDialogTitle">Add bill</h2></div>
+        <button type="button" class="icon-button" data-close="billDialog">✕</button>
+      </div>
+      <div class="dialog-body">
+        <label>Common bill<select id="billPreset"></select></label>
+        <label>Bill name<input id="billName" required maxlength="70" placeholder="Electric, Mortgage, Insurance..."></label>
+        <div class="form-row">
+          <label>Amount<input id="billAmount" required type="number" min="0" step="0.01" placeholder="0.00"></label>
+          <label>Due day<input id="billDueDay" required type="number" min="1" max="31" placeholder="15"></label>
+        </div>
+        <div class="form-row">
+          <label>Category<select id="billCategory"></select></label>
+          <label>Frequency<select id="billFrequency"><option value="monthly">Monthly</option><option value="yearly">Yearly</option><option value="one-time">One-time</option></select></label>
+        </div>
+        <label id="yearlyMonthWrap" hidden>Month paid each year<select id="billYearlyMonth"></select></label>
+        <div class="form-row">
+          <label>Reminder<select id="billReminderDays"><option value="-1">No reminder</option><option value="0">On due date</option><option value="1">1 day before</option><option value="3">3 days before</option><option value="7">7 days before</option></select></label>
+          <label class="check-line card-check"><input id="billAutopay" type="checkbox"> Autopay</label>
+        </div>
+      </div>
+      <div class="dialog-actions"><button type="button" class="secondary-btn" data-close="billDialog">Cancel</button><button type="submit" class="primary-btn">Save bill</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="appointmentDialog">
+    <form id="appointmentForm">
+      <div class="dialog-header">
+        <div><p class="eyebrow">PERSONAL SCHEDULE</p><h2 id="appointmentDialogTitle">Add appointment</h2></div>
+        <button type="button" class="icon-button" data-close="appointmentDialog">✕</button>
+      </div>
+      <div class="dialog-body">
+        <label>Appointment title<input id="appointmentTitle" required maxlength="80" placeholder="Doctor, haircut, dinner..."></label>
+        <div class="form-row"><label>Date<input id="appointmentDate" required type="date"></label><label>Time<input id="appointmentTime" type="time"></label></div>
+        <label>Location<input id="appointmentLocation" maxlength="100" placeholder="Optional"></label>
+        <label>Reminder<select id="appointmentReminderMinutes"><option value="-1">No reminder</option><option value="15">15 minutes before</option><option value="60">1 hour before</option><option value="1440">1 day before</option><option value="2880">2 days before</option></select></label>
+        <label>Notes<textarea id="appointmentNotes" rows="4" maxlength="500" placeholder="Optional details"></textarea></label>
+      </div>
+      <div class="dialog-actions"><button type="button" class="secondary-btn" data-close="appointmentDialog">Cancel</button><button type="submit" class="primary-btn">Save appointment</button></div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
