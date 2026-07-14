@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="RavenBill simplified raven mobile icon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1d3a"/>
+      <stop offset="1" stop-color="#020817"/>
+    </linearGradient>
+    <linearGradient id="head" x1="0" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#304d7a"/>
+      <stop offset="0.55" stop-color="#152846"/>
+      <stop offset="1" stop-color="#07101f"/>
+    </linearGradient>
+    <linearGradient id="wing" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#285bb8"/>
+      <stop offset="1" stop-color="#0b2b68"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="188" fill="none" stroke="#197dff" stroke-width="12"/>
+  <circle cx="256" cy="256" r="171" fill="none" stroke="#12345d" stroke-width="3"/>
+
+  <!-- Raven head: broad crown, heavy curved beak, and shaggy throat -->
+  <path fill="url(#head)" d="M122 365c24-95 74-177 151-235 38-29 86-39 132-23-28 7-51 20-68 40 46-3 86 12 118 43-36-4-66 3-90 22 31 5 57 20 76 45-42-8-79 0-109 24-27 22-49 53-66 94-36 18-74 28-114 29-18 1-28-13-30-39z"/>
+  <path fill="#050b15" d="M252 163c46-43 106-60 163-38-31 6-55 18-72 35 42-1 79 13 108 41-47-9-89-1-123 25-29 22-54 55-74 99-11-56-12-109-2-162z"/>
+
+  <!-- Long raven beak -->
+  <path fill="#3c567a" d="M335 190c38-24 82-24 123-3l-71 28 86 18-99 22c-5-29-19-51-39-65z"/>
+  <path fill="#101c30" d="M374 219l99 14-98 23c8-14 8-26-1-37z"/>
+  <path fill="#7b98bd" opacity=".55" d="M348 194c30-13 62-13 94-2l-59 17-35-15z"/>
+
+  <!-- Eye -->
+  <ellipse cx="337" cy="177" rx="20" ry="18" fill="#050b15"/>
+  <circle cx="342" cy="177" r="8" fill="#56b7ff"/>
+  <circle cx="345" cy="173" r="3" fill="#eef8ff"/>
+
+  <!-- Wing and three simple feather shapes -->
+  <path fill="url(#wing)" d="M118 381c22-55 61-104 113-145 16 48 12 97-10 145-30 30-62 51-96 63-9-20-12-41-7-63z"/>
+  <path fill="#102957" d="M137 419c42-18 78-46 108-84-10 47-36 87-77 119-13-8-23-20-31-35z"/>
+  <path fill="#0a1d40" d="M181 447c40-24 71-56 94-96-5 43-23 81-55 114-14-4-27-10-39-18z"/>
+
+  <!-- Shaggy raven throat -->
+  <path fill="#07101f" d="M272 286l30 23-18 15 26 19-23 13 15 30-31-15-10 41-19-38-26 24 5-42-36 8 27-31-28-18 39-9-12-37 34 22 27-35z"/>
+</svg>
