@@ -1,6 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/shell.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -11,16 +14,23 @@
       ]
     },
     {
-      "source": "/styles.css",
+      "source": "/brand-overrides.css",
       "headers": [
         { "key": "Content-Type", "value": "text/css; charset=utf-8" },
         { "key": "Cache-Control", "value": "no-store, max-age=0" }
       ]
     },
     {
-      "source": "/app.js",
+      "source": "/rb-icon.svg",
       "headers": [
-        { "key": "Content-Type", "value": "application/javascript; charset=utf-8" },
+        { "key": "Content-Type", "value": "image/svg+xml; charset=utf-8" },
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        { "key": "Content-Type", "value": "application/manifest+json; charset=utf-8" },
         { "key": "Cache-Control", "value": "no-store, max-age=0" }
       ]
     },
