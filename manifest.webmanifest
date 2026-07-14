@@ -1,16 +1,16 @@
 {
-  "id": "/ravenbill-2",
+  "id": "/ravenbill-2-final",
   "name": "RavenBill 2.0",
-  "short_name": "RavenBill 2.0",
-  "start_url": "/?source=pwa&version=2",
+  "short_name": "RavenBill",
+  "start_url": "/?source=pwa&version=30",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#020b15",
-  "theme_color": "#04101e",
-  "description": "RavenBill 2.0 — a mobile-friendly bill tracker, schedule, and reminder center.",
+  "theme_color": "#020b15",
+  "description": "RavenBill 2.0 personal bill tracker, schedule, reminders, reports, yearly bills, and autopay planner.",
   "icons": [
-    { "src": "/ravenbill-2-icon.svg?v=11", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
-    { "src": "/ravenbill-2-icon.svg?v=11", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+    { "src": "/raven-logo.svg?v=30", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/raven-logo.svg?v=30", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
   ]
 }
