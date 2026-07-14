@@ -4,7 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#020b15">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="RavenBill 2.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <title>RavenBill 2.0</title>
+  <link rel="manifest" href="/manifest.webmanifest?v=41">
+  <link rel="icon" href="/rb-icon.svg?v=41" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/rb-icon.svg?v=41">
   <style>
     html,body{margin:0;min-height:100%;background:#020b15;color:#f7f9fc;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
     .loading{min-height:100vh;display:grid;place-items:center;text-align:center;padding:24px}
@@ -16,18 +23,28 @@
   <script>
     (async () => {
       try {
-        const response = await fetch('/index.html?source=shell&version=40', { cache: 'no-store' });
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.filter((key) => key.startsWith('ravenbill')).map((key) => caches.delete(key)));
+        }
+
+        const response = await fetch('/index.html?application=1&version=41', { cache: 'no-store' });
         if (!response.ok) throw new Error(`Could not load RavenBill (${response.status})`);
         const source = await response.text();
         const doc = new DOMParser().parseFromString(source, 'text/html');
 
         doc.title = 'RavenBill 2.0';
 
-        const oldBrandImages = doc.querySelectorAll('.brand img, .brand-raven, .raven-quote img, .quote img');
-        oldBrandImages.forEach((image) => image.remove());
+        doc.querySelectorAll('.brand img, .brand-raven, .raven-quote img, .quote img').forEach((image) => image.remove());
+        doc.querySelectorAll('img').forEach((image) => {
+          const src = image.getAttribute('src') || '';
+          const inDesktopBrand = image.closest('.sidebar .brand, .sidebar .quote, .sidebar .raven-quote');
+          if (inDesktopBrand || /raven-logo|ravenbill-mobile-icon|ravenbill-2-icon/i.test(src)) image.remove();
+        });
 
         const brand = doc.querySelector('.brand');
         if (brand) {
+          brand.querySelectorAll('img,picture,svg').forEach((node) => node.remove());
           let wordmark = brand.querySelector('.brand-name, .brand-word, .wordmark');
           if (!wordmark) {
             wordmark = doc.createElement('span');
@@ -35,7 +52,6 @@
             brand.prepend(wordmark);
           }
           wordmark.innerHTML = 'RAVEN<span>BILL</span><sup>2.0</sup>';
-
           let subtitle = brand.querySelector('small');
           if (!subtitle) {
             subtitle = doc.createElement('small');
@@ -45,12 +61,12 @@
         }
 
         doc.querySelectorAll('.mobile-head img, .mobile-brand img').forEach((image) => {
-          image.src = '/rb-icon.svg?v=40';
-          image.alt = 'RavenBill RB';
+          image.src = '/rb-icon.svg?v=41';
+          image.alt = 'RB';
         });
 
         doc.querySelectorAll('link[rel="icon"], link[rel="apple-touch-icon"]').forEach((link) => {
-          link.href = '/rb-icon.svg?v=40';
+          link.href = '/rb-icon.svg?v=41';
           link.type = 'image/svg+xml';
         });
 
@@ -63,17 +79,27 @@
         appleTitle.content = 'RavenBill 2.0';
 
         const manifest = doc.querySelector('link[rel="manifest"]');
-        if (manifest) manifest.href = '/manifest.webmanifest?v=40';
+        if (manifest) manifest.href = '/manifest.webmanifest?v=41';
 
-        const overrides = doc.createElement('link');
-        overrides.rel = 'stylesheet';
-        overrides.href = '/brand-overrides.css?v=40';
-        doc.head.appendChild(overrides);
+        const forcedStyle = doc.createElement('style');
+        forcedStyle.textContent = `
+          .sidebar .brand > img,
+          .sidebar .brand picture,
+          .sidebar .brand svg,
+          .sidebar .quote img,
+          .sidebar .raven-quote img,
+          .brand-raven { display:none !important; width:0 !important; height:0 !important; margin:0 !important; padding:0 !important; }
+          .sidebar .brand { padding-top:22px !important; padding-bottom:22px !important; min-height:112px !important; align-content:center !important; }
+          .sidebar .brand-name,.sidebar .brand-word,.sidebar .wordmark { margin-top:0 !important; }
+        `;
+        doc.head.appendChild(forcedStyle);
 
         const html = '<!doctype html>\n' + doc.documentElement.outerHTML
-          .replaceAll('/raven-logo.svg?v=30', '/rb-icon.svg?v=40')
-          .replaceAll('/raven-logo.svg', '/rb-icon.svg?v=40')
-          .replaceAll('/ravenbill-mobile-icon.svg', '/rb-icon.svg?v=40');
+          .replaceAll('/raven-logo.svg?v=30', '/rb-icon.svg?v=41')
+          .replaceAll('/raven-logo.svg?v=31', '/rb-icon.svg?v=41')
+          .replaceAll('/raven-logo.svg', '/rb-icon.svg?v=41')
+          .replaceAll('/ravenbill-mobile-icon.svg', '/rb-icon.svg?v=41')
+          .replaceAll('/ravenbill-2-icon.svg', '/rb-icon.svg?v=41');
 
         document.open();
         document.write(html);
