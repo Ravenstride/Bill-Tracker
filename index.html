@@ -3,328 +3,107 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#04101e">
+  <meta name="theme-color" content="#020b15">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="RavenBill">
+  <meta name="apple-mobile-web-app-title" content="RavenBill 2.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <title>RavenBill</title>
-  <link rel="manifest" href="/manifest.webmanifest?v=9">
-  <link rel="icon" href="/raven-logo.svg?v=9" type="image/svg+xml">
-  <link rel="apple-touch-icon" sizes="180x180" href="/raven-logo.svg?v=9">
-  <link rel="stylesheet" href="/styles.css?v=9">
+  <title>RavenBill 2.0</title>
+  <link rel="manifest" href="/manifest.webmanifest?v=30">
+  <link rel="icon" href="/raven-logo.svg?v=30" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/raven-logo.svg?v=30">
+  <style>
+    :root{--bg:#020b15;--panel:#071725;--panel2:#091d30;--line:#17324c;--line2:#204665;--text:#f7f9fc;--muted:#94a7ba;--blue:#0f7fff;--blue2:#4da8ff;--green:#19d184;--amber:#f5b91f;--red:#ff4e5c;--purple:#8e5cff;--shadow:0 18px 45px rgba(0,0,0,.3)}
+    *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(circle at 45% -10%,rgba(15,127,255,.1),transparent 32%),linear-gradient(180deg,#020b15,#010811);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(77,168,255,.3);outline-offset:2px}
+    .app-shell{display:grid;grid-template-columns:210px minmax(760px,1fr) 320px;min-height:100vh}
+    .sidebar{position:sticky;top:0;height:100vh;padding:19px 12px 15px;background:linear-gradient(180deg,#020d18,#020912);border-right:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+    .brand{display:grid;place-items:center;text-align:center;border:0;background:transparent;color:#fff;padding:0 5px 16px}.brand img{width:108px;height:108px;object-fit:contain;filter:drop-shadow(0 14px 24px rgba(0,82,190,.22))}.brand-name{font-family:Georgia,"Times New Roman",serif;font-size:27px;font-weight:900;letter-spacing:-.035em;margin-top:5px}.brand-name span{color:var(--blue)}.brand-name sup{font-family:Inter,sans-serif;font-size:10px;color:var(--blue2);position:relative;top:-1.15em;margin-left:3px}.brand small{font-size:11px;letter-spacing:.2em;color:#a2afbd;margin-top:2px}
+    .side-nav{display:grid;gap:7px}.nav-link{border:0;background:transparent;color:#a7b4c5;border-radius:9px;display:flex;align-items:center;gap:13px;padding:12px 15px;text-align:left;font-size:14px;font-weight:700}.nav-link span{width:22px;text-align:center;font-size:17px}.nav-link:hover{background:rgba(255,255,255,.04);color:#fff}.nav-link.active{color:#fff;background:linear-gradient(90deg,#0d4ca8,#0b3470);box-shadow:inset 2px 0 #66b3ff}
+    .sidebar-bottom{margin-top:auto;display:grid;gap:10px}.quote{border:1px solid #145da9;border-radius:12px;background:linear-gradient(180deg,rgba(8,28,49,.75),rgba(3,13,23,.85));padding:13px 8px;text-align:center}.quote img{width:64px;height:64px;object-fit:contain}.quote p{font-size:13px;line-height:1.45;margin:7px 0 0}.quote span{color:var(--blue2)}.backup{border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:11px;background:rgba(255,255,255,.025)}.backup strong{display:block;font-size:11px}.backup p{margin:4px 0 8px;color:#8396aa;font-size:9px;line-height:1.4}.backup button{width:100%;border:0;border-radius:8px;background:#0b3b6c;color:#c2e1ff;padding:9px;font-weight:800}
+    .main-content{min-width:0;padding:18px 22px 86px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:14px}.top-left{display:flex;align-items:center;gap:20px}.menu-icon{border:0;background:transparent;color:#fff;font-size:27px;padding:0}.page-heading h1{font-size:25px;margin:0;letter-spacing:-.035em}.page-heading p{margin:5px 0 0;color:var(--muted);font-size:13px}.month-control{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#061522}.month-control button{width:44px;height:42px;border:0;background:#071b2d;color:#8bc7ff;font-size:23px}.month-control strong{min-width:132px;text-align:center;font-size:13px}
+    .page{display:none}.page.active{display:block}.overview{display:grid;grid-template-columns:230px 1fr;min-height:280px;border:1px solid var(--line2);border-radius:15px;overflow:hidden;background:linear-gradient(180deg,#071725,#06131f);box-shadow:var(--shadow)}.progress-wrap{display:grid;place-items:center;border-right:1px solid var(--line);padding:22px}.progress-ring{--progress:0;width:176px;height:176px;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(var(--blue) calc(var(--progress)*1%),#15324f 0)}.progress-ring:before{content:"";position:absolute;inset:14px;border-radius:50%;background:#071624}.progress-ring:after{content:"";position:absolute;width:32px;height:9px;border-radius:50px;background:#fff;top:18px;right:15px;transform:rotate(40deg)}.progress-ring div{position:relative;z-index:1;text-align:center}.progress-ring strong{font-size:39px;display:block;line-height:1}.progress-ring span{display:block;margin-top:9px;font-size:11px;font-weight:800;letter-spacing:.08em;color:#c6d1dc}.overview-body{display:grid;grid-template-rows:1fr auto}.overview-metrics{display:grid;grid-template-columns:repeat(4,1fr);padding:25px 15px 18px;border-bottom:1px solid var(--line)}.metric{display:grid;place-items:center;text-align:center;border-right:1px solid var(--line);padding:0 10px}.metric:last-child{border-right:0}.metric-icon{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-size:22px;margin-bottom:12px;background:#092d52;color:var(--blue2)}.metric-icon.green{background:#073327;color:var(--green)}.metric-icon.amber{background:#392a08;color:var(--amber)}.metric-icon.red{background:#38131b;color:var(--red)}.metric strong{font-size:30px}.metric small{color:#b0bcc8;margin-top:8px}.overview-money{display:grid;grid-template-columns:repeat(3,1fr);padding:17px 18px}.overview-money article{display:flex;align-items:center;gap:12px;border-right:1px solid var(--line);padding:0 18px}.overview-money article:last-child{border-right:0}.money-icon{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:#082d52;color:var(--blue);font-size:20px;font-weight:900}.overview-money strong{display:block;font-size:20px}.overview-money small{color:var(--muted)}
+    .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}.summary-card,.panel{background:linear-gradient(180deg,rgba(9,28,46,.98),rgba(5,19,31,.98));border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow)}.summary-card{padding:15px 16px}.summary-card span{font-size:12px;color:#9fb0c1}.summary-card strong{display:block;font-size:22px;margin:7px 0 2px}.summary-card small{color:#7f91a5;font-size:10px}.green-text{color:var(--green)}.amber-text{color:var(--amber)}.red-text{color:var(--red)}
+    .glance-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}.panel{padding:15px}.panel-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}.eyebrow{font-size:10px;font-weight:900;letter-spacing:.07em;color:var(--blue2);margin:0 0 5px}.red-label{color:var(--red)}.amber-label{color:var(--amber)}.panel h3{font-size:15px;margin:0}.count-badge{min-width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:900;background:rgba(255,78,92,.18);color:#ff7984}.count-badge.amber{background:rgba(245,185,31,.17);color:#ffd15d}.stack-list{display:grid;gap:8px}.bill-row{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);background:rgba(4,16,27,.75);border-radius:10px;padding:10px}.bill-icon{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#0b315a;color:var(--blue2);font-size:19px}.bill-row h4{margin:0;font-size:13px}.bill-row p{margin:4px 0 0;color:var(--muted);font-size:11px}.bill-row .amount{text-align:right;font-size:13px;font-weight:800}.status{display:inline-block;margin-top:4px;font-size:9px;font-weight:900}.status.paid{color:var(--green)}.status.due{color:var(--amber)}.status.overdue{color:var(--red)}.status.upcoming{color:#a6b5c5}.empty{border:1px dashed var(--line);border-radius:10px;padding:24px;text-align:center;color:var(--muted);font-size:13px}
+    .category-section{margin-top:14px}.category-strip{display:grid;grid-template-columns:repeat(6,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden}.category-card{text-align:center;padding:13px 7px;border-right:1px solid var(--line)}.category-card:last-child{border-right:0}.category-card .bill-icon{margin:auto}.category-card strong,.category-card b,.category-card small{display:block}.category-card strong{font-size:12px;margin-top:8px}.category-card b{font-size:13px;margin-top:5px}.category-card small{font-size:10px;color:var(--muted);margin-top:3px}
+    .right-rail{position:sticky;top:0;height:100vh;border-left:1px solid var(--line);background:linear-gradient(180deg,#030e19,#020912);padding:18px 14px 82px;overflow:hidden;display:flex;flex-direction:column}.rail-tools{display:grid;grid-template-columns:1fr 40px;gap:9px}.search-box{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:20px;padding:0 13px;background:#061522}.search-box input{border:0;background:transparent;color:#fff;padding:10px 0;width:100%;outline:0}.rail-icon{border:0;background:transparent;color:#c6d2df;font-size:20px}.rail-heading{display:flex;justify-content:space-between;align-items:center;margin:18px 3px 10px}.rail-heading h2{font-size:13px;margin:0;letter-spacing:.04em}select,input,textarea{border:1px solid var(--line);background:#061827;color:#fff;border-radius:8px;padding:9px 10px}.rail-heading select{width:auto;padding:7px 28px 7px 10px}.rail-list{display:grid;gap:7px;overflow:auto}.rail-bill{display:grid;grid-template-columns:43px minmax(0,1fr) auto;gap:9px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:9px;background:#071725}.rail-bill .bill-icon{width:40px;height:40px}.rail-bill strong{font-size:12px;display:block}.rail-bill small{font-size:10px;color:var(--muted);display:block;margin-top:3px}.rail-side{text-align:right}.rail-side b{font-size:12px;display:block}.rail-status{font-size:8px;font-weight:900;padding:3px 5px;border-radius:4px;background:#102235;color:#afbdcb;margin-top:4px;display:inline-block}.rail-status.paid{background:#073522;color:#46e3a1}.rail-status.overdue{background:#3b1117;color:#ff6471}.rail-status.due{background:#3b2d08;color:#ffd050}.rail-add{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);width:58px;height:58px;border:5px solid #0a2647;border-radius:50%;background:linear-gradient(135deg,var(--blue),#0862d1);color:#fff;font-size:32px}
+    .page-panel{min-height:610px}.panel-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}.panel-title h2{margin:0}.actions{display:flex;gap:9px}.primary,.secondary,.danger{border:0;border-radius:9px;padding:10px 13px;font-weight:850}.primary{background:linear-gradient(135deg,var(--blue),#419dff);color:#fff}.secondary{background:#0b2c4a;color:#a9d3ff}.danger{background:#36131a;color:#ff818b}.bill-grid,.template-grid,.history-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.template-grid,.history-grid{grid-template-columns:repeat(3,1fr)}.bill-card,.template-card,.history-card{border:1px solid var(--line);background:#061624;border-radius:11px;padding:13px}.bill-card{display:grid;grid-template-columns:auto 1fr;gap:11px}.bill-check{width:29px;height:29px;border-radius:8px;border:2px solid #375878;background:transparent;color:#06111e}.bill-check.checked{background:var(--green);border-color:var(--green)}.bill-card h4,.template-card h4,.history-card h4{margin:0 0 4px}.meta{color:var(--muted);font-size:11px}.card-actions{display:flex;gap:11px;margin-top:9px}.link-btn{border:0;background:transparent;color:var(--blue2);font-weight:800;padding:0;font-size:11px}.link-btn.delete{color:var(--red)}
+    .schedule-grid{display:grid;grid-template-columns:420px 1fr;gap:18px}.calendar{border:1px solid var(--line);border-radius:12px;background:#061624;padding:13px}.weekday-row,.calendar-days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.weekday-row span{text-align:center;color:var(--muted);font-size:10px;padding:5px}.day{aspect-ratio:1;border:0;border-radius:8px;background:#081b2d;color:#fff;position:relative}.day.muted{opacity:.35}.day.event:after{content:"";position:absolute;width:5px;height:5px;border-radius:50%;background:var(--blue);bottom:5px;left:50%}.day.selected{background:var(--blue)}
+    dialog{width:min(94vw,540px);padding:0;border:1px solid var(--line);border-radius:16px;background:#071725;color:#fff;box-shadow:0 30px 90px rgba(0,0,0,.55)}dialog::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(4px)}.dialog-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding:17px}.dialog-head h2{margin:0}.dialog-body{padding:17px;display:grid;gap:13px}.dialog-body label{display:grid;gap:6px;color:var(--muted);font-size:12px}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.check-line{display:flex!important;align-items:center;gap:8px!important;color:#fff!important}.check-line input{width:auto}.dialog-actions{display:flex;justify-content:flex-end;gap:9px;padding:0 17px 17px}
+    .mobile-header,.bottom-nav,.more-sheet{display:none}
+    @media(max-width:1220px){.app-shell{grid-template-columns:195px minmax(650px,1fr)}.right-rail{display:none}.overview{grid-template-columns:215px 1fr}}
+    @media(max-width:850px){.app-shell{display:block}.sidebar,.right-rail{display:none}.main-content{padding:72px 12px calc(94px + env(safe-area-inset-bottom))}.mobile-header{position:fixed;display:flex;top:0;left:0;right:0;z-index:30;height:61px;align-items:center;justify-content:space-between;padding:8px 14px;background:rgba(2,11,21,.97);border-bottom:1px solid var(--line);backdrop-filter:blur(15px)}.mobile-header img{width:43px;height:43px;object-fit:contain}.mobile-header button{border:0;background:transparent;color:#fff;font-size:22px}.topbar{display:none}.overview{grid-template-columns:1fr;min-height:0}.progress-wrap{border-right:0;border-bottom:1px solid var(--line);padding:17px}.progress-ring{width:142px;height:142px}.overview-metrics{padding:16px 8px}.metric{padding:0 5px}.metric-icon{width:38px;height:38px;font-size:17px}.metric strong{font-size:22px}.metric small{font-size:9px}.overview-money{padding:14px 6px}.overview-money article{display:grid;justify-items:center;text-align:center;padding:0 5px;gap:5px}.overview-money strong{font-size:15px}.money-icon{width:34px;height:34px}.summary-grid{grid-template-columns:1fr 1fr}.glance-grid{grid-template-columns:1fr}.category-strip{grid-template-columns:repeat(3,1fr)}.category-card:nth-child(3){border-right:0}.bill-grid,.template-grid,.history-grid,.schedule-grid{grid-template-columns:1fr}.panel-title{display:grid;align-items:stretch}.actions{display:grid;grid-template-columns:1fr 1fr}.bottom-nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;z-index:35;left:0;right:0;bottom:0;background:rgba(2,11,21,.98);border-top:1px solid var(--line);padding:7px 6px calc(7px + env(safe-area-inset-bottom));backdrop-filter:blur(15px)}.bottom-nav button{border:0;background:transparent;color:#8495a7;display:grid;place-items:center;gap:3px;padding:4px 1px;font-size:9px;font-weight:700}.bottom-nav button span{font-size:17px}.bottom-nav button.active{color:var(--blue2)}.bottom-nav .mobile-add{width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;font-size:28px;justify-self:center;margin-top:-19px;box-shadow:0 0 0 5px #071725}.more-sheet{position:fixed;z-index:40;left:12px;right:12px;bottom:78px;background:#071725;border:1px solid var(--line);border-radius:14px;padding:10px;box-shadow:var(--shadow)}.more-sheet.open{display:grid;grid-template-columns:1fr 1fr;gap:8px}.more-sheet button{border:0;border-radius:9px;background:#0a2239;color:#fff;padding:12px}}
+    @media(max-width:480px){.overview-metrics{grid-template-columns:repeat(2,1fr);gap:12px}.metric:nth-child(2){border-right:0}.metric{border-bottom:1px solid var(--line);padding-bottom:12px}.metric:nth-last-child(-n+2){border-bottom:0}.form-row{grid-template-columns:1fr}}
+  </style>
 </head>
-<body data-page="dashboard">
+<body>
+  <header class="mobile-header"><button id="mobileMenu" aria-label="Open menu">☰</button><img src="/raven-logo.svg?v=30" alt="RavenBill 2.0"><button data-page="reminders" aria-label="Reminders">♢</button></header>
   <div class="app-shell">
     <aside class="sidebar">
-      <button class="brand" data-page="dashboard" aria-label="Open dashboard">
-        <img class="brand-raven" src="/raven-logo.svg?v=9" alt="RavenBill raven">
-        <span class="brand-word">RAVEN<span>BILL</span></span>
-        <small>BILL TRACKER</small>
-      </button>
-
-      <nav class="side-nav" aria-label="Main navigation">
-        <button class="nav-link active" data-page="dashboard"><span>⌂</span>Dashboard</button>
-        <button class="nav-link" data-page="bills"><span>▤</span>Bills</button>
-        <button class="nav-link" data-page="schedule"><span>◫</span>Schedule</button>
-        <button class="nav-link" data-page="reminders"><span>◉</span>Reminders</button>
-        <button class="nav-link" data-page="template"><span>◇</span>Bill Template</button>
-        <button class="nav-link" data-page="history"><span>↺</span>History</button>
+      <button class="brand" data-page="dashboard"><img src="/raven-logo.svg?v=30" alt="RavenBill raven"><span class="brand-name">RAVEN<span>BILL</span><sup>2.0</sup></span><small>BILL TRACKER</small></button>
+      <nav class="side-nav">
+        <button class="nav-link active" data-page="dashboard"><span>⌂</span>Dashboard</button><button class="nav-link" data-page="bills"><span>▤</span>Bills</button><button class="nav-link" data-page="schedule"><span>▦</span>Schedule</button><button class="nav-link" data-page="reminders"><span>♧</span>Reminders</button><button class="nav-link" data-page="template"><span>◇</span>Template</button><button class="nav-link" data-page="history"><span>↺</span>History</button><button class="nav-link" data-page="reports"><span>▥</span>Reports</button><button class="nav-link" data-page="settings"><span>⚙</span>Settings</button>
       </nav>
-
-      <div class="raven-quote">
-        <img src="/raven-logo.svg?v=9" alt="">
-        <p>“Stay organized.<br><span>Stay ahead.</span>”</p>
-      </div>
-
-      <div class="sidebar-note">
-        <strong>Stored on this device</strong>
-        <span>Use Backup to save a copy of your data.</span>
-        <button id="backupBtn" class="secondary-btn">⇧ Backup data</button>
-      </div>
+      <div class="sidebar-bottom"><div class="quote"><img src="/raven-logo.svg?v=30" alt=""><p>Stay organized.<br><span>Stay ahead.</span></p></div><div class="backup"><strong>Stored on this device</strong><p>Use Backup to save a copy of your data.</p><button id="backupBtn">⇧ Backup data</button></div></div>
     </aside>
-
     <main class="main-content">
-      <header class="topbar">
-        <div class="page-heading">
-          <p class="eyebrow" id="pageEyebrow">PERSONAL BILL ORGANIZER</p>
-          <h1 id="pageTitle">Dashboard</h1>
-          <p id="pageSubtitle">Stay ahead of bills and appointments.</p>
-        </div>
-        <div class="month-control">
-          <button id="prevMonth" aria-label="Previous month">‹</button>
-          <strong id="monthLabel"></strong>
-          <button id="nextMonth" aria-label="Next month">›</button>
-        </div>
-      </header>
-
+      <header class="topbar"><div class="top-left"><button class="menu-icon">☰</button><div class="page-heading"><h1 id="pageTitle">Dashboard</h1><p id="pageSubtitle">Stay ahead of bills and appointments.</p></div></div><div class="month-control"><button id="prevMonth">‹</button><strong id="monthLabel"></strong><button id="nextMonth">›</button></div></header>
       <section class="page active" id="dashboardPage">
-        <section class="overview-panel">
-          <div class="progress-column">
-            <div class="hero-ring" id="progressRing" style="--progress:0">
-              <div><strong id="progressPercent">0%</strong><span>BILLS PAID</span></div>
-            </div>
-          </div>
-
-          <div class="overview-body">
-            <div class="overview-metrics">
-              <article><span class="metric-icon blue">▤</span><strong id="summaryBillCount">0</strong><small>Total Bills</small></article>
-              <article><span class="metric-icon green">✓</span><strong id="summaryPaidCount">0</strong><small>Paid</small></article>
-              <article><span class="metric-icon amber">◷</span><strong id="summaryDueSoonCount">0</strong><small>Due Soon</small></article>
-              <article><span class="metric-icon red">!</span><strong id="summaryOverdueCount">0</strong><small>Overdue</small></article>
-            </div>
-            <div class="overview-finance">
-              <article><span class="finance-icon">$</span><div><strong id="topPaidAmount">$0.00</strong><small>Paid</small></div></article>
-              <article><span class="finance-icon">$</span><div><strong id="summaryRemaining">$0.00</strong><small>Remaining</small></div></article>
-              <article><span class="finance-icon">▦</span><div><strong id="nextDueDateVisual">—</strong><small>Next Due Date</small></div></article>
-            </div>
-          </div>
-          <span id="summaryAppointments" hidden>0</span>
-        </section>
-
-        <section class="stat-grid compact-stats">
-          <article class="stat-card"><span>Total this month</span><strong id="totalAmount">$0.00</strong><small id="totalBillsCaption">0 bills</small></article>
-          <article class="stat-card"><span>Paid</span><strong class="green-text" id="paidAmount">$0.00</strong><small id="paidBillsCaption">0 completed</small></article>
-          <article class="stat-card"><span>Due soon</span><strong class="amber-text" id="dueSoonCount">0</strong><small>Within 7 days</small></article>
-          <article class="stat-card"><span>Overdue</span><strong class="red-text" id="overdueCount">0</strong><small>Needs attention</small></article>
-        </section>
-
-        <section class="glance-grid">
-          <article class="panel glance-card today-card">
-            <div class="panel-heading"><div><p class="eyebrow red-label">DUE TODAY</p><h3>Today</h3></div><span class="count-badge red-badge" id="todayCount">0</span></div>
-            <div id="dueTodayList" class="stack-list"></div>
-          </article>
-          <article class="panel glance-card">
-            <div class="panel-heading"><div><p class="eyebrow amber-label">DUE THIS WEEK</p><h3>Coming up</h3></div><span class="count-badge amber-badge" id="weekCount">0</span></div>
-            <div id="dueWeekList" class="stack-list"></div>
-          </article>
-          <article class="panel glance-card">
-            <div class="panel-heading"><div><p class="eyebrow red-label">OVERDUE</p><h3>Needs attention</h3></div><span class="count-badge red-badge" id="overdueVisualCount">0</span></div>
-            <div id="overdueVisualList" class="stack-list"></div>
-          </article>
-        </section>
-
-        <section class="lower-grid">
-          <article class="panel category-panel">
-            <div class="panel-heading"><div><p class="eyebrow">SPENDING BY CATEGORY</p><h3>This month</h3></div></div>
-            <div id="categorySummary" class="category-strip"></div>
-          </article>
-          <article class="panel schedule-preview">
-            <div class="panel-heading"><div><p class="eyebrow">PERSONAL SCHEDULE</p><h3>Upcoming appointments</h3></div><button class="text-button" data-page="schedule">Open schedule</button></div>
-            <div id="dashboardAppointmentList" class="stack-list"></div>
-          </article>
-        </section>
-
-        <div id="dashboardBillList" class="source-list" aria-hidden="true"></div>
+        <section class="overview"><div class="progress-wrap"><div class="progress-ring" id="progressRing" style="--progress:0"><div><strong id="progressPercent">0%</strong><span>BILLS PAID</span></div></div></div><div class="overview-body"><div class="overview-metrics"><article class="metric"><span class="metric-icon">▤</span><strong id="totalBillCount">0</strong><small>Total Bills</small></article><article class="metric"><span class="metric-icon green">✓</span><strong id="paidBillCount">0</strong><small>Paid</small></article><article class="metric"><span class="metric-icon amber">◷</span><strong id="dueSoonCount">0</strong><small>Due Soon</small></article><article class="metric"><span class="metric-icon red">!</span><strong id="overdueCount">0</strong><small>Overdue</small></article></div><div class="overview-money"><article><span class="money-icon">$</span><div><strong id="paidAmount">$0.00</strong><small>Paid</small></div></article><article><span class="money-icon">$</span><div><strong id="remainingAmount">$0.00</strong><small>Remaining</small></div></article><article><span class="money-icon">▦</span><div><strong id="nextDueDate">—</strong><small>Next Due Date</small></div></article></div></div></section>
+        <section class="summary-grid"><article class="summary-card"><span>Total this month</span><strong id="monthTotal">$0.00</strong><small id="monthBillCaption">0 bills</small></article><article class="summary-card"><span>Paid</span><strong class="green-text" id="summaryPaid">$0.00</strong><small id="summaryPaidCaption">0 completed</small></article><article class="summary-card"><span>Due soon</span><strong class="amber-text" id="summarySoon">0</strong><small>Within 7 days</small></article><article class="summary-card"><span>Overdue</span><strong class="red-text" id="summaryLate">0</strong><small>Needs attention</small></article></section>
+        <section class="glance-grid"><article class="panel"><div class="panel-head"><div><p class="eyebrow red-label">DUE TODAY</p><h3>Today</h3></div><span class="count-badge" id="todayBadge">0</span></div><div class="stack-list" id="todayList"></div></article><article class="panel"><div class="panel-head"><div><p class="eyebrow amber-label">DUE THIS WEEK</p><h3>Coming up</h3></div><span class="count-badge amber" id="weekBadge">0</span></div><div class="stack-list" id="weekList"></div></article><article class="panel"><div class="panel-head"><div><p class="eyebrow red-label">OVERDUE</p><h3>Needs attention</h3></div><span class="count-badge" id="lateBadge">0</span></div><div class="stack-list" id="lateList"></div></article></section>
+        <section class="category-section"><div class="panel-head"><div><p class="eyebrow">SPENDING BY CATEGORY</p><h3>This month</h3></div></div><div class="category-strip" id="categoryStrip"></div></section>
       </section>
-
-      <section class="page" id="billsPage">
-        <section class="panel page-panel">
-          <div class="panel-heading bills-heading">
-            <div><p class="eyebrow">MONTHLY BILL SHEET</p><h3 id="billsHeading">Bills</h3></div>
-            <div class="heading-actions">
-              <select id="billFilter" aria-label="Filter bills">
-                <option value="all">All bills</option><option value="unpaid">Unpaid</option><option value="paid">Paid</option>
-                <option value="dueSoon">Due soon</option><option value="overdue">Overdue</option>
-                <option value="monthly">Monthly bills</option><option value="yearly">Yearly bills</option><option value="autopay">Autopay</option>
-              </select>
-              <button class="primary-btn" id="addBillButton">+ Add bill</button>
-            </div>
-          </div>
-          <div id="billList" class="bill-grid"></div>
-        </section>
-      </section>
-
-      <section class="page" id="schedulePage">
-        <section class="panel page-panel">
-          <div class="panel-heading bills-heading">
-            <div><p class="eyebrow">MONTHLY AGENDA</p><h3>Appointments & personal schedule</h3></div>
-            <button class="primary-btn" id="addAppointmentButton">+ Add appointment</button>
-          </div>
-          <div class="schedule-layout">
-            <div class="mini-calendar">
-              <div class="weekday-row"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
-              <div id="calendarGrid" class="calendar-grid"></div>
-            </div>
-            <div><div class="agenda-date" id="agendaDateLabel">Monthly agenda</div><div id="appointmentList" class="stack-list"></div></div>
-          </div>
-        </section>
-      </section>
-
-      <section class="page" id="remindersPage">
-        <section class="reminder-grid">
-          <article class="panel reminder-hero">
-            <div class="reminder-bell">◉</div>
-            <p class="eyebrow light">PHONE REMINDERS</p>
-            <h2>Never miss a bill or appointment.</h2>
-            <p>Add RavenBill reminders to your phone calendar for dependable alerts, even when RavenBill is closed.</p>
-            <div class="reminder-actions">
-              <button class="primary-btn light-btn" id="calendarExportBtn">Add next 12 months</button>
-              <button class="secondary-btn dark-secondary" id="selectedMonthCalendarBtn">Add selected month</button>
-            </div>
-          </article>
-          <article class="panel settings-panel">
-            <div class="panel-heading"><div><p class="eyebrow">DEFAULT SETTINGS</p><h3>Reminder timing</h3></div></div>
-            <div class="settings-form">
-              <label>Bill reminder<select id="defaultBillReminder"><option value="0">On due date</option><option value="1">1 day before</option><option value="3">3 days before</option><option value="7">7 days before</option></select></label>
-              <label>Appointment reminder<select id="defaultAppointmentReminder"><option value="15">15 minutes before</option><option value="60">1 hour before</option><option value="1440">1 day before</option><option value="2880">2 days before</option></select></label>
-              <label>Bill reminder time<input id="defaultReminderTime" type="time" value="09:00"></label>
-              <label class="check-line"><input id="overdueReminderToggle" type="checkbox"> Remind me about overdue bills when RavenBill opens</label>
-              <button class="primary-btn" id="saveReminderSettingsBtn">Save reminder settings</button>
-            </div>
-          </article>
-        </section>
-        <section class="content-grid reminder-content-grid">
-          <article class="panel">
-            <div class="panel-heading"><div><p class="eyebrow">RAVENBILL ALERTS</p><h3>On-device notifications</h3></div><span id="notificationStatus" class="status-badge">Not enabled</span></div>
-            <p class="panel-copy">These alerts appear while RavenBill is open or when you return to it. Phone calendar reminders are the reliable option when the app is closed.</p>
-            <div class="button-row"><button class="primary-btn" id="enableNotificationsBtn">Enable alerts</button><button class="secondary-btn" id="testNotificationBtn">Send test alert</button></div>
-          </article>
-          <article class="panel">
-            <div class="panel-heading"><div><p class="eyebrow">COMING UP</p><h3>Reminder preview</h3></div></div>
-            <div id="reminderPreviewList" class="stack-list"></div>
-          </article>
-        </section>
-      </section>
-
-      <section class="page" id="templatePage">
-        <section class="panel page-panel">
-          <div class="panel-heading bills-heading">
-            <div><p class="eyebrow">AUTOMATIC MONTH SETUP</p><h3>Common bill template</h3><p>Every unused month is populated from this list. Yearly bills appear only in their chosen month.</p></div>
-            <button class="primary-btn" id="addTemplateButton">+ Add template bill</button>
-          </div>
-          <div id="templateList" class="template-grid"></div>
-        </section>
-      </section>
-
-      <section class="page" id="historyPage">
-        <section class="panel page-panel">
-          <div class="panel-heading"><div><p class="eyebrow">PAST MONTHS</p><h3>Bill history</h3></div></div>
-          <div id="historyList" class="history-grid"></div>
-        </section>
-      </section>
+      <section class="page" id="billsPage"><article class="panel page-panel"><div class="panel-title"><div><p class="eyebrow">MONTHLY BILL SHEET</p><h2 id="billsHeading">Bills</h2></div><div class="actions"><select id="billFilter"><option value="all">All bills</option><option value="unpaid">Unpaid</option><option value="paid">Paid</option><option value="autopay">Autopay</option><option value="yearly">Yearly</option></select><button class="primary" id="addBillBtn">+ Add Bill</button></div></div><div class="bill-grid" id="billGrid"></div></article></section>
+      <section class="page" id="schedulePage"><article class="panel page-panel"><div class="panel-title"><div><p class="eyebrow">PERSONAL SCHEDULE</p><h2>Appointments</h2></div><button class="primary" id="addAppointmentBtn">+ Add Appointment</button></div><div class="schedule-grid"><div class="calendar"><div class="weekday-row"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div class="calendar-days" id="calendarDays"></div></div><div><h3 id="agendaTitle">Monthly agenda</h3><div class="stack-list" id="appointmentList"></div></div></div></article></section>
+      <section class="page" id="remindersPage"><article class="panel page-panel"><div class="panel-title"><div><p class="eyebrow">PHONE REMINDERS</p><h2>Reminder Center</h2></div></div><section class="glance-grid"><div class="panel"><h3>Selected month</h3><p class="meta">Add bills and appointments to your phone calendar.</p><button class="primary" id="exportMonthBtn">Export month</button></div><div class="panel"><h3>Next 12 months</h3><p class="meta">Create a full year of reminders.</p><button class="primary" id="exportYearBtn">Export 12 months</button></div><div class="panel"><h3>Browser alert</h3><p class="meta">Test notifications while RavenBill is open.</p><button class="secondary" id="testAlertBtn">Test alert</button></div></section><div class="stack-list" id="reminderPreview" style="margin-top:14px"></div></article></section>
+      <section class="page" id="templatePage"><article class="panel page-panel"><div class="panel-title"><div><p class="eyebrow">AUTOMATIC MONTH SETUP</p><h2>Bill Template</h2></div><button class="primary" id="addTemplateBtn">+ Add Template Bill</button></div><div class="template-grid" id="templateGrid"></div></article></section>
+      <section class="page" id="historyPage"><article class="panel page-panel"><div class="panel-title"><div><p class="eyebrow">PAST MONTHS</p><h2>History</h2></div></div><div class="history-grid" id="historyGrid"></div></article></section>
+      <section class="page" id="reportsPage"><article class="panel page-panel"><div class="panel-title"><div><p class="eyebrow">MONTHLY REPORT</p><h2>Reports</h2></div></div><div class="category-strip" id="reportCategories"></div></article></section>
+      <section class="page" id="settingsPage"><article class="panel page-panel"><div class="panel-title"><div><p class="eyebrow">RAVENBILL 2.0</p><h2>Settings</h2></div></div><section class="glance-grid"><div class="panel"><h3>Backup</h3><p class="meta">Download all RavenBill data.</p><button class="secondary" id="backupSettingsBtn">Backup data</button></div><div class="panel"><h3>Reset selected month</h3><p class="meta">Rebuild the month from your template.</p><button class="danger" id="resetMonthBtn">Reset month</button></div><div class="panel"><h3>Storage</h3><p class="meta">Your information stays in this browser until backed up.</p></div></section></article></section>
     </main>
-
-    <aside class="right-rail" aria-label="Upcoming bills">
-      <div class="rail-tools">
-        <label class="search-box"><span>⌕</span><input id="railSearch" type="search" placeholder="Search bills..."></label>
-        <button class="rail-icon" data-page="reminders" aria-label="Open reminders">♢</button>
-      </div>
-      <div class="rail-heading"><h2>UPCOMING BILLS</h2><select id="railFilter"><option value="all">All</option><option value="unpaid">Unpaid</option><option value="paid">Paid</option><option value="autopay">Autopay</option></select></div>
-      <div id="upcomingBillsRail" class="rail-list"></div>
-      <button class="rail-add" id="railAddBill">+</button>
-    </aside>
+    <aside class="right-rail"><div class="rail-tools"><label class="search-box"><span>⌕</span><input id="railSearch" placeholder="Search bills..."></label><button class="rail-icon" data-page="reminders">♢</button></div><div class="rail-heading"><h2>UPCOMING BILLS</h2><select id="railFilter"><option value="all">All</option><option value="unpaid">Unpaid</option><option value="paid">Paid</option><option value="autopay">Autopay</option></select></div><div class="rail-list" id="railList"></div><button class="rail-add" id="railAddBtn">+</button></aside>
   </div>
-
-  <button class="floating-add" id="floatingAdd" aria-label="Add item">+</button>
-
-  <nav class="bottom-nav" aria-label="Mobile navigation">
-    <button class="active" data-page="dashboard"><span>⌂</span>Home</button>
-    <button data-page="bills"><span>▤</span>Bills</button>
-    <button data-page="schedule"><span>◫</span>Schedule</button>
-    <button data-page="reminders"><span>◉</span>Alerts</button>
-    <button data-page="template"><span>◇</span>Template</button>
-  </nav>
-
-  <dialog id="billDialog">
-    <form id="billForm">
-      <div class="dialog-header"><div><p class="eyebrow" id="billDialogEyebrow">MONTHLY BILL</p><h2 id="billDialogTitle">Add bill</h2></div><button type="button" class="icon-button" data-close="billDialog">✕</button></div>
-      <div class="dialog-body">
-        <label>Common bill<select id="billPreset"></select></label>
-        <label>Bill name<input id="billName" required maxlength="70" placeholder="Electric, Mortgage, Insurance..."></label>
-        <div class="form-row"><label>Amount<input id="billAmount" required type="number" min="0" step="0.01" placeholder="0.00"></label><label>Due day<input id="billDueDay" required type="number" min="1" max="31" placeholder="15"></label></div>
-        <div class="form-row"><label>Category<select id="billCategory"></select></label><label>Frequency<select id="billFrequency"><option value="monthly">Monthly</option><option value="yearly">Yearly</option><option value="one-time">One-time</option></select></label></div>
-        <label id="yearlyMonthWrap" hidden>Month paid each year<select id="billYearlyMonth"></select></label>
-        <div class="form-row"><label>Reminder<select id="billReminderDays"><option value="-1">No reminder</option><option value="0">On due date</option><option value="1">1 day before</option><option value="3">3 days before</option><option value="7">7 days before</option></select></label><label class="check-line card-check"><input id="billAutopay" type="checkbox"> Autopay</label></div>
-      </div>
-      <div class="dialog-actions"><button type="button" class="secondary-btn" data-close="billDialog">Cancel</button><button type="submit" class="primary-btn">Save bill</button></div>
-    </form>
-  </dialog>
-
-  <dialog id="appointmentDialog">
-    <form id="appointmentForm">
-      <div class="dialog-header"><div><p class="eyebrow">PERSONAL SCHEDULE</p><h2 id="appointmentDialogTitle">Add appointment</h2></div><button type="button" class="icon-button" data-close="appointmentDialog">✕</button></div>
-      <div class="dialog-body">
-        <label>Appointment title<input id="appointmentTitle" required maxlength="80" placeholder="Doctor, haircut, dinner..."></label>
-        <div class="form-row"><label>Date<input id="appointmentDate" required type="date"></label><label>Time<input id="appointmentTime" type="time"></label></div>
-        <label>Location<input id="appointmentLocation" maxlength="100" placeholder="Optional"></label>
-        <label>Reminder<select id="appointmentReminderMinutes"><option value="-1">No reminder</option><option value="15">15 minutes before</option><option value="60">1 hour before</option><option value="1440">1 day before</option><option value="2880">2 days before</option></select></label>
-        <label>Notes<textarea id="appointmentNotes" rows="4" maxlength="500" placeholder="Optional details"></textarea></label>
-      </div>
-      <div class="dialog-actions"><button type="button" class="secondary-btn" data-close="appointmentDialog">Cancel</button><button type="submit" class="primary-btn">Save appointment</button></div>
-    </form>
-  </dialog>
-
-  <script defer src="/app.js?v=9"></script>
+  <nav class="bottom-nav"><button class="active" data-page="dashboard"><span>⌂</span>Dashboard</button><button data-page="bills"><span>▤</span>Bills</button><button class="mobile-add" id="mobileAddBtn">+</button><button data-page="schedule"><span>▦</span>Schedule</button><button id="moreBtn"><span>•••</span>More</button></nav>
+  <div class="more-sheet" id="moreSheet"><button data-page="reminders">Reminders</button><button data-page="template">Template</button><button data-page="history">History</button><button data-page="reports">Reports</button><button data-page="settings">Settings</button></div>
+  <dialog id="billDialog"><form id="billForm"><div class="dialog-head"><h2 id="billDialogTitle">Add Bill</h2><button type="button" class="secondary close-bill">✕</button></div><div class="dialog-body"><label>Bill name<input id="billName" required></label><div class="form-row"><label>Amount<input id="billAmount" type="number" min="0" step=".01" required></label><label>Due day<input id="billDueDay" type="number" min="1" max="31" required></label></div><div class="form-row"><label>Category<select id="billCategory"></select></label><label>Frequency<select id="billFrequency"><option value="monthly">Monthly</option><option value="yearly">Yearly</option><option value="one-time">One-time</option></select></label></div><label id="yearlyMonthWrap" hidden>Month paid<select id="billYearlyMonth"></select></label><div class="form-row"><label>Reminder<select id="billReminderDays"><option value="-1">No reminder</option><option value="0">Due date</option><option value="1">1 day before</option><option value="3">3 days before</option><option value="7">7 days before</option></select></label><label class="check-line"><input id="billAutopay" type="checkbox"> Autopay</label></div></div><div class="dialog-actions"><button type="button" class="secondary close-bill">Cancel</button><button class="primary">Save</button></div></form></dialog>
+  <dialog id="appointmentDialog"><form id="appointmentForm"><div class="dialog-head"><h2 id="appointmentDialogTitle">Add Appointment</h2><button type="button" class="secondary close-appointment">✕</button></div><div class="dialog-body"><label>Title<input id="appointmentTitle" required></label><div class="form-row"><label>Date<input id="appointmentDate" type="date" required></label><label>Time<input id="appointmentTime" type="time"></label></div><label>Location<input id="appointmentLocation"></label><label>Notes<textarea id="appointmentNotes" rows="3"></textarea></label></div><div class="dialog-actions"><button type="button" class="secondary close-appointment">Cancel</button><button class="primary">Save</button></div></form></dialog>
   <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      const money = new Intl.NumberFormat("en-US", { style:"currency", currency:"USD" });
-      const icons = {Housing:"⌂",Utilities:"⚡",Transportation:"🚗",Debt:"▣",Insurance:"◆",Healthcare:"✚",Subscriptions:"▶",Family:"●",Pets:"🐾",Savings:"$",Taxes:"%",Other:"•"};
-      const source = document.getElementById("dashboardBillList");
-      const getState = () => { try { return JSON.parse(localStorage.getItem("ravenbill.v7")) || {}; } catch { return {}; } };
-      const getMonthKey = () => {
-        const label = document.getElementById("monthLabel").textContent.trim();
-        const date = new Date(`${label} 1`);
-        return Number.isNaN(date.getTime()) ? "" : `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}`;
-      };
-      const statusFor = (bill, key) => {
-        if (bill.paid) return {text:"PAID",cls:"paid"};
-        const now = new Date();
-        const currentKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
-        if (key !== currentKey) return {text:"UPCOMING",cls:"upcoming"};
-        const [year,month] = key.split("-").map(Number);
-        const last = new Date(year,month,0).getDate();
-        const due = new Date(year,month-1,Math.min(Number(bill.dueDay),last)); due.setHours(0,0,0,0);
-        const today = new Date(); today.setHours(0,0,0,0);
-        const days = Math.ceil((due-today)/86400000);
-        if (days < 0) return {text:`OVERDUE ${Math.abs(days)} DAYS`,cls:"overdue"};
-        if (days === 0) return {text:"DUE TODAY",cls:"due-soon"};
-        if (days <= 7) return {text:`DUE IN ${days} DAY${days===1?"":"S"}`,cls:"due-soon"};
-        return {text:"UPCOMING",cls:"upcoming"};
-      };
-      const billRow = (bill,status) => `<div class="rail-bill"><span class="rail-bill-icon ${status.cls}">${icons[bill.category]||"•"}</span><div><strong>${String(bill.name).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}</strong><small>Due ${bill.dueDay}</small></div><div class="rail-bill-side"><b>${money.format(Number(bill.amount||0))}</b><span class="rail-status ${status.cls}">${status.text}</span></div></div>`;
-      const empty = (text) => `<div class="empty-state mini-empty">${text}</div>`;
-      const refresh = () => {
-        const cards = [...source.querySelectorAll(".list-card")];
-        const today = cards.filter(card => card.querySelector(".status")?.textContent.includes("DUE TODAY"));
-        const week = cards.filter(card => card.querySelector(".status")?.classList.contains("due-soon") && !card.querySelector(".status")?.textContent.includes("DUE TODAY"));
-        const overdue = cards.filter(card => card.querySelector(".status")?.classList.contains("overdue"));
-        document.getElementById("dueTodayList").innerHTML = today.length ? today.slice(0,2).map(card=>card.outerHTML).join("") : empty("Nothing due today.");
-        document.getElementById("dueWeekList").innerHTML = week.length ? week.slice(0,3).map(card=>card.outerHTML).join("") : empty("Nothing due this week.");
-        document.getElementById("overdueVisualList").innerHTML = overdue.length ? overdue.slice(0,3).map(card=>card.outerHTML).join("") : empty("No overdue bills.");
-        document.getElementById("todayCount").textContent = today.length;
-        document.getElementById("weekCount").textContent = week.length;
-        document.getElementById("overdueVisualCount").textContent = overdue.length;
-
-        const state = getState(); const key = getMonthKey(); const bills = state.months?.[key]?.bills || [];
-        const paid = bills.filter(b=>b.paid); const dueSoon = bills.filter(b=>statusFor(b,key).cls==="due-soon"); const pastDue = bills.filter(b=>statusFor(b,key).cls==="overdue");
-        document.getElementById("summaryPaidCount").textContent = paid.length;
-        document.getElementById("summaryDueSoonCount").textContent = dueSoon.length;
-        document.getElementById("summaryOverdueCount").textContent = pastDue.length;
-        document.getElementById("topPaidAmount").textContent = document.getElementById("paidAmount").textContent;
-        const next = bills.filter(b=>!b.paid).sort((a,b)=>a.dueDay-b.dueDay)[0];
-        document.getElementById("nextDueDateVisual").textContent = next ? `${document.getElementById("monthLabel").textContent.split(" ")[0]} ${next.dueDay}` : "—";
-
-        const totals = {};
-        bills.forEach(b=>{ totals[b.category] = (totals[b.category]||0) + Number(b.amount||0); });
-        const categoryEntries = Object.entries(totals).sort((a,b)=>b[1]-a[1]).slice(0,6);
-        document.getElementById("categorySummary").innerHTML = categoryEntries.length ? categoryEntries.map(([category,total])=>`<article><span>${icons[category]||"•"}</span><strong>${category}</strong><b>${money.format(total)}</b><small>${bills.filter(x=>x.category===category).length} bill${bills.filter(x=>x.category===category).length===1?"":"s"}</small></article>`).join("") : empty("Add amounts to see category totals.");
-        renderRail();
-      };
-      const renderRail = () => {
-        const state = getState(); const key = getMonthKey(); let bills = [...(state.months?.[key]?.bills || [])].sort((a,b)=>a.dueDay-b.dueDay);
-        const search = document.getElementById("railSearch").value.trim().toLowerCase(); const filter = document.getElementById("railFilter").value;
-        bills = bills.filter(b => (!search || String(b.name).toLowerCase().includes(search)) && (filter==="all" || (filter==="paid"&&b.paid) || (filter==="unpaid"&&!b.paid) || (filter==="autopay"&&b.autopay)));
-        document.getElementById("upcomingBillsRail").innerHTML = bills.length ? bills.map(b=>billRow(b,statusFor(b,key))).join("") : empty("No bills match this view.");
-      };
-      new MutationObserver(refresh).observe(source,{childList:true,subtree:true});
-      new MutationObserver(refresh).observe(document.getElementById("monthLabel"),{childList:true,subtree:true,characterData:true});
-      document.getElementById("railSearch").addEventListener("input",renderRail);
-      document.getElementById("railFilter").addEventListener("change",renderRail);
-      document.getElementById("railAddBill").addEventListener("click",()=>document.getElementById("addBillButton").click());
-      document.querySelectorAll("[data-page]").forEach(button=>button.addEventListener("click",()=>{ document.body.dataset.page = button.dataset.page; }));
-      setTimeout(refresh,80);
-    });
+  (()=>{
+    const KEY="ravenbill.v30",OLD=["ravenbill.v7","ravenbill.v4","ravenbill.v2","ravenbill.2.0.final"],months=["January","February","March","April","May","June","July","August","September","October","November","December"],categories=["Housing","Utilities","Transportation","Debt","Insurance","Healthcare","Subscriptions","Family","Pets","Savings","Taxes","Other"],icons={Housing:"⌂",Utilities:"⚡",Transportation:"🚗",Debt:"▣",Insurance:"◆",Healthcare:"✚",Subscriptions:"▶",Family:"●",Pets:"🐾",Savings:"$",Taxes:"%",Other:"•••"},money=new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}),$=id=>document.getElementById(id),uuid=()=>crypto.randomUUID?crypto.randomUUID():"id-"+Date.now()+Math.random().toString(36).slice(2);
+    let state=load(),selected=new Date(),page="dashboard",editingBill=null,billMode="month",editingAppointment=null,selectedDate=null;selected=new Date(selected.getFullYear(),selected.getMonth(),1);normalize();if(!state.template.length)state.template=defaultTemplate();ensureMonth();save();
+    function defaultTemplate(){return [mk("Mortgage / Rent","Housing",1),mk("Electric","Utilities",10),mk("Water","Utilities",15),mk("Internet","Utilities",18),mk("Cell Phone","Utilities",20),mk("Car Payment","Transportation",22),mk("Auto Insurance","Insurance",24),mk("Credit Card","Debt",28),mk("Netflix","Subscriptions",10)]}
+    function mk(name,category,dueDay,amount=0,frequency="monthly",yearlyMonth=null){return{id:uuid(),name,category,dueDay,amount,frequency,yearlyMonth,autopay:false,reminderDays:3}}
+    function load(){for(const k of [KEY,...OLD]){try{const raw=localStorage.getItem(k);if(raw)return JSON.parse(raw)}catch{}}return{template:[],months:{},appointments:[]}}
+    function normalize(){state.template=Array.isArray(state.template)?state.template.map(x=>({...x,frequency:x.frequency||"monthly",yearlyMonth:x.yearlyMonth??null,reminderDays:x.reminderDays??3})):[];state.months=state.months&&typeof state.months==="object"?state.months:{};Object.values(state.months).forEach(m=>m.bills=Array.isArray(m.bills)?m.bills.map(x=>({...x,frequency:x.frequency||"monthly",yearlyMonth:x.yearlyMonth??null,reminderDays:x.reminderDays??3})):[]);state.appointments=Array.isArray(state.appointments)?state.appointments:[]}
+    function save(){localStorage.setItem(KEY,JSON.stringify(state))}function monthKey(d=selected){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`}function shiftMonth(d,n){return new Date(d.getFullYear(),d.getMonth()+n,1)}
+    function priorAmount(templateId,date){for(let i=1;i<=24;i++){const m=state.months[monthKey(shiftMonth(date,-i))],match=m?.bills?.find(x=>x.sourceTemplateId===templateId);if(match&&Number(match.amount)>0)return Number(match.amount)}return 0}
+    function ensureMonth(date=selected,force=false){const k=monthKey(date);if(state.months[k]&&!force)return state.months[k];const bills=state.template.filter(t=>t.frequency==="monthly"||(t.frequency==="yearly"&&Number(t.yearlyMonth)===date.getMonth())).map(t=>({...t,id:uuid(),sourceTemplateId:t.id,amount:t.autopay?priorAmount(t.id,date):Number(t.amount||0),paid:false,paidAt:null}));state.months[k]={createdAt:new Date().toISOString(),bills};save();return state.months[k]}
+    function bills(){return ensureMonth().bills}function appointments(){return state.appointments.filter(a=>a.date.startsWith(monthKey())).sort((a,b)=>(a.date+(a.time||"23:59")).localeCompare(b.date+(b.time||"23:59")))}
+    function billStatus(x,d=selected){if(x.paid)return{text:"PAID",cls:"paid"};if(monthKey(d)!==monthKey(new Date()))return{text:"UPCOMING",cls:"upcoming"};const now=new Date();now.setHours(0,0,0,0);const last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(),due=new Date(d.getFullYear(),d.getMonth(),Math.min(Number(x.dueDay),last));due.setHours(0,0,0,0);const days=Math.ceil((due-now)/86400000);if(days<0)return{text:`OVERDUE ${Math.abs(days)} DAYS`,cls:"overdue",days};if(days===0)return{text:"DUE TODAY",cls:"due",days};if(days<=7)return{text:`DUE IN ${days} DAY${days===1?"":"S"}`,cls:"due",days};return{text:"UPCOMING",cls:"upcoming",days}}
+    function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}function empty(t){return `<div class="empty">${t}</div>`}
+    function row(x){const s=billStatus(x);return `<div class="bill-row"><span class="bill-icon">${icons[x.category]||"•"}</span><div><h4>${esc(x.name)}</h4><p>${esc(x.category)} · Due ${x.dueDay}${x.autopay?" · Autopay":""}</p><span class="status ${s.cls}">${s.text}</span></div><div class="amount">${money.format(Number(x.amount||0))}</div></div>`}
+    function render(){ensureMonth();$("monthLabel").textContent=selected.toLocaleDateString("en-US",{month:"long",year:"numeric"});renderDashboard();renderBills();renderSchedule();renderTemplate();renderHistory();renderReports();renderReminders();renderRail()}
+    function renderDashboard(){const bs=bills(),paid=bs.filter(x=>x.paid),total=bs.reduce((s,x)=>s+Number(x.amount||0),0),paidTotal=paid.reduce((s,x)=>s+Number(x.amount||0),0),soon=bs.filter(x=>billStatus(x).cls==="due"),late=bs.filter(x=>billStatus(x).cls==="overdue"),pct=bs.length?Math.round(paid.length/bs.length*100):0;$("progressRing").style.setProperty("--progress",pct);$("progressPercent").textContent=pct+"%";$("totalBillCount").textContent=bs.length;$("paidBillCount").textContent=paid.length;$("dueSoonCount").textContent=soon.length;$("overdueCount").textContent=late.length;$("paidAmount").textContent=money.format(paidTotal);$("remainingAmount").textContent=money.format(total-paidTotal);$("monthTotal").textContent=money.format(total);$("summaryPaid").textContent=money.format(paidTotal);$("summarySoon").textContent=soon.length;$("summaryLate").textContent=late.length;$("monthBillCaption").textContent=`${bs.length} bill${bs.length===1?"":"s"}`;$("summaryPaidCaption").textContent=`${paid.length} completed`;const next=bs.filter(x=>!x.paid).sort((a,b)=>a.dueDay-b.dueDay)[0];$("nextDueDate").textContent=next?`${months[selected.getMonth()]} ${next.dueDay}`:"—";const today=soon.filter(x=>billStatus(x).days===0),week=soon.filter(x=>billStatus(x).days>0);$("todayBadge").textContent=today.length;$("weekBadge").textContent=week.length;$("lateBadge").textContent=late.length;$("todayList").innerHTML=today.length?today.slice(0,3).map(row).join(""):empty("Nothing due today.");$("weekList").innerHTML=week.length?week.slice(0,3).map(row).join(""):empty("Nothing due this week.");$("lateList").innerHTML=late.length?late.slice(0,3).map(row).join(""):empty("No overdue bills.");renderCategories("categoryStrip",bs)}
+    function renderCategories(id,bs){const totals={};bs.forEach(x=>totals[x.category]=(totals[x.category]||0)+Number(x.amount||0));const entries=Object.entries(totals).sort((a,b)=>b[1]-a[1]).slice(0,6);$(id).innerHTML=entries.length?entries.map(([c,v])=>`<article class="category-card"><span class="bill-icon">${icons[c]||"•"}</span><strong>${esc(c)}</strong><b>${money.format(v)}</b><small>${bs.filter(x=>x.category===c).length} bill${bs.filter(x=>x.category===c).length===1?"":"s"}</small></article>`).join(""):empty("Add bill amounts to see categories.")}
+    function renderRail(){let list=[...bills()].sort((a,b)=>a.dueDay-b.dueDay);const q=$("railSearch").value.trim().toLowerCase(),f=$("railFilter").value;list=list.filter(x=>(!q||x.name.toLowerCase().includes(q))&&(f==="all"||(f==="paid"&&x.paid)||(f==="unpaid"&&!x.paid)||(f==="autopay"&&x.autopay)));$("railList").innerHTML=list.length?list.map(x=>{const s=billStatus(x);return `<div class="rail-bill"><span class="bill-icon">${icons[x.category]||"•"}</span><div><strong>${esc(x.name)}</strong><small>Due ${months[selected.getMonth()].slice(0,3)} ${x.dueDay}</small></div><div class="rail-side"><b>${money.format(Number(x.amount||0))}</b><span class="rail-status ${s.cls}">${s.text}</span></div></div>`}).join(""):empty("No bills match.")}
+    function renderBills(){let list=[...bills()];const f=$("billFilter").value;list=list.filter(x=>f==="all"||(f==="paid"&&x.paid)||(f==="unpaid"&&!x.paid)||(f==="autopay"&&x.autopay)||(f==="yearly"&&x.frequency==="yearly"));$("billsHeading").textContent=`${months[selected.getMonth()]} ${selected.getFullYear()} Bills`;$("billGrid").innerHTML=list.length?list.sort((a,b)=>a.dueDay-b.dueDay).map(x=>`<article class="bill-card"><button class="bill-check ${x.paid?"checked":""}" data-bill-action="toggle" data-id="${x.id}">${x.paid?"✓":""}</button><div><h4>${esc(x.name)}</h4><div class="meta">${esc(x.category)} · Due ${x.dueDay} · ${x.frequency}${x.autopay?" · Autopay":""}</div><div style="font-size:20px;font-weight:900;margin-top:8px">${money.format(Number(x.amount||0))}</div><div class="card-actions"><button class="link-btn" data-bill-action="edit" data-id="${x.id}">Edit</button><button class="link-btn delete" data-bill-action="delete" data-id="${x.id}">Delete</button></div></div></article>`).join(""):empty("No bills in this view.")}
+    function renderSchedule(){const year=selected.getFullYear(),month=selected.getMonth(),first=new Date(year,month,1).getDay(),last=new Date(year,month+1,0).getDate(),prev=new Date(year,month,0).getDate(),eventDays=new Set(appointments().map(a=>Number(a.date.slice(-2))));let html="";for(let i=0;i<42;i++){let day,muted=false,d;if(i<first){day=prev-first+i+1;d=new Date(year,month-1,day);muted=true}else if(i>=first+last){day=i-first-last+1;d=new Date(year,month+1,day);muted=true}else{day=i-first+1;d=new Date(year,month,day)}const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;html+=`<button class="day ${muted?"muted":""} ${!muted&&eventDays.has(day)?"event":""} ${selectedDate===k?"selected":""}" data-calendar-date="${k}" data-muted="${muted}">${day}</button>`}$("calendarDays").innerHTML=html;const list=selectedDate?appointments().filter(a=>a.date===selectedDate):appointments();$("agendaTitle").textContent=selectedDate?new Date(selectedDate+"T12:00:00").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"}):`${months[month]} agenda`;$("appointmentList").innerHTML=list.length?list.map(a=>`<div class="bill-row"><span class="bill-icon">${Number(a.date.slice(-2))}</span><div><h4>${esc(a.title)}</h4><p>${a.time||"Any time"}${a.location?" · "+esc(a.location):""}</p></div><div><button class="link-btn" data-appointment-action="edit" data-id="${a.id}">Edit</button> <button class="link-btn delete" data-appointment-action="delete" data-id="${a.id}">Delete</button></div></div>`).join(""):empty("No appointments.")}
+    function renderTemplate(){$("templateGrid").innerHTML=state.template.length?state.template.map(x=>`<article class="template-card"><h4>${icons[x.category]||"•"} ${esc(x.name)}</h4><div class="meta">${esc(x.category)} · Due ${x.dueDay} · ${x.frequency}${x.frequency==="yearly"?" · "+months[x.yearlyMonth]:""}${x.autopay?" · Autopay":""}</div><div class="card-actions"><button class="link-btn" data-template-action="edit" data-id="${x.id}">Edit</button><button class="link-btn delete" data-template-action="delete" data-id="${x.id}">Delete</button></div></article>`).join(""):empty("No template bills.")}
+    function renderHistory(){const keys=Object.keys(state.months).sort().reverse();$("historyGrid").innerHTML=keys.length?keys.map(k=>{const m=state.months[k],total=m.bills.reduce((s,x)=>s+Number(x.amount||0),0),paid=m.bills.filter(x=>x.paid),d=new Date(k+"-01T12:00:00");return `<article class="history-card"><h4>${d.toLocaleDateString("en-US",{month:"long",year:"numeric"})}</h4><div class="meta">${paid.length} of ${m.bills.length} paid</div><p>Total: <strong>${money.format(total)}</strong></p></article>`}).join(""):empty("No history yet.")}
+    function renderReports(){renderCategories("reportCategories",bills())}
+    function renderReminders(){const preview=[];for(let i=0;i<3;i++){const d=shiftMonth(selected,i);ensureMonth(d).bills.filter(x=>!x.paid&&Number(x.reminderDays)>=0).forEach(x=>preview.push({...x,date:d}))}$("reminderPreview").innerHTML=preview.length?preview.slice(0,8).map(x=>`<div class="bill-row"><span class="bill-icon">♧</span><div><h4>${esc(x.name)}</h4><p>${months[x.date.getMonth()]} ${x.dueDay} · reminder ${x.reminderDays===0?"on due date":x.reminderDays+" days before"}</p></div></div>`).join(""):empty("No reminders scheduled.")}
+    function switchPage(p){page=p;document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));$(p+"Page").classList.add("active");document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===p));const titles={dashboard:["Dashboard","Stay ahead of bills and appointments."],bills:["Bills","Track monthly, yearly, and autopay bills."],schedule:["Schedule","Keep appointments beside your bills."],reminders:["Reminders","Export alerts to your phone calendar."],template:["Template","Control what appears in each new month."],history:["History","Review previous months."],reports:["Reports","See spending by category."],settings:["Settings","Backup or reset RavenBill."]}[p];$("pageTitle").textContent=titles[0];$("pageSubtitle").textContent=titles[1];$("moreSheet").classList.remove("open");window.scrollTo({top:0,behavior:"smooth"})}
+    function openBill(x=null,mode="month"){editingBill=x?.id||null;billMode=mode;$("billDialogTitle").textContent=x?"Edit Bill":mode==="template"?"Add Template Bill":"Add Bill";$("billName").value=x?.name||"";$("billAmount").value=x?.amount??"";$("billDueDay").value=x?.dueDay??"";$("billCategory").value=x?.category||"Utilities";$("billFrequency").value=x?.frequency||"monthly";$("billYearlyMonth").value=x?.yearlyMonth??selected.getMonth();$("billAutopay").checked=!!x?.autopay;$("billReminderDays").value=String(x?.reminderDays??3);toggleYearly();$("billDialog").showModal()}
+    function toggleYearly(){$("yearlyMonthWrap").hidden=$("billFrequency").value!=="yearly"}function openAppointment(a=null){editingAppointment=a?.id||null;$("appointmentDialogTitle").textContent=a?"Edit Appointment":"Add Appointment";$("appointmentTitle").value=a?.title||"";$("appointmentDate").value=a?.date||`${monthKey()}-01`;$("appointmentTime").value=a?.time||"";$("appointmentLocation").value=a?.location||"";$("appointmentNotes").value=a?.notes||"";$("appointmentDialog").showModal()}
+    function backup(){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(state,null,2)],{type:"application/json"}));a.download=`ravenbill-2.0-backup-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href)}
+    function exportIcs(count){const lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//RavenBill 2.0//EN","CALSCALE:GREGORIAN"];for(let i=0;i<count;i++){const d=shiftMonth(selected,i);ensureMonth(d).bills.forEach(x=>{const day=Math.min(x.dueDay,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()),date=`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(day).padStart(2,"0")}`;lines.push("BEGIN:VEVENT",`UID:${x.id}-${date}@ravenbill`,`DTSTART;VALUE=DATE:${date}`,`SUMMARY:RavenBill: ${x.name} due`,`DESCRIPTION:${x.category} ${money.format(Number(x.amount||0))}`,"BEGIN:VALARM",`TRIGGER:-P${Math.max(0,Number(x.reminderDays||0))}D`,"ACTION:DISPLAY",`DESCRIPTION:${x.name} is due`,"END:VALARM","END:VEVENT")})}state.appointments.forEach(a=>{const d=new Date(a.date+"T"+(a.time||"09:00"));if(d>=selected&&d<shiftMonth(selected,count)){const stamp=a.date.replaceAll("-","")+(a.time?`T${a.time.replace(":","")}00`:"");lines.push("BEGIN:VEVENT",`UID:${a.id}@ravenbill`,`DTSTART:${stamp}`,`SUMMARY:${a.title}`,`LOCATION:${a.location||""}`,`DESCRIPTION:${a.notes||""}`,"END:VEVENT")}});lines.push("END:VCALENDAR");const link=document.createElement("a");link.href=URL.createObjectURL(new Blob([lines.join("\r\n")],{type:"text/calendar"}));link.download=`ravenbill-reminders-${monthKey()}.ics`;link.click();URL.revokeObjectURL(link.href)}
+    categories.forEach(c=>$("billCategory").insertAdjacentHTML("beforeend",`<option>${c}</option>`));months.forEach((m,i)=>$("billYearlyMonth").insertAdjacentHTML("beforeend",`<option value="${i}">${m}</option>`));document.querySelectorAll("[data-page]").forEach(x=>x.addEventListener("click",()=>switchPage(x.dataset.page)));$("prevMonth").onclick=()=>{selected=shiftMonth(selected,-1);selectedDate=null;render()};$("nextMonth").onclick=()=>{selected=shiftMonth(selected,1);selectedDate=null;render()};$("railSearch").oninput=renderRail;$("railFilter").onchange=renderRail;$("billFilter").onchange=renderBills;$("railAddBtn").onclick=()=>openBill();$("addBillBtn").onclick=()=>openBill();$("mobileAddBtn").onclick=()=>page==="schedule"?openAppointment():openBill();$("addTemplateBtn").onclick=()=>openBill(null,"template");$("addAppointmentBtn").onclick=()=>openAppointment();$("billFrequency").onchange=toggleYearly;document.querySelectorAll(".close-bill").forEach(x=>x.onclick=()=>$("billDialog").close());document.querySelectorAll(".close-appointment").forEach(x=>x.onclick=()=>$("appointmentDialog").close());
+    $("billForm").onsubmit=e=>{e.preventDefault();const base={id:editingBill||uuid(),name:$("billName").value.trim(),amount:Number($("billAmount").value),dueDay:Number($("billDueDay").value),category:$("billCategory").value,frequency:$("billFrequency").value,yearlyMonth:$("billFrequency").value==="yearly"?Number($("billYearlyMonth").value):null,autopay:$("billAutopay").checked,reminderDays:Number($("billReminderDays").value)};if(billMode==="template"){state.template=editingBill?state.template.map(x=>x.id===editingBill?base:x):[...state.template,base]}else{const m=ensureMonth(),old=m.bills.find(x=>x.id===editingBill);base.paid=old?.paid||false;base.paidAt=old?.paidAt||null;base.sourceTemplateId=old?.sourceTemplateId||null;m.bills=editingBill?m.bills.map(x=>x.id===editingBill?base:x):[...m.bills,base]}save();$("billDialog").close();render()};
+    $("appointmentForm").onsubmit=e=>{e.preventDefault();const a={id:editingAppointment||uuid(),title:$("appointmentTitle").value.trim(),date:$("appointmentDate").value,time:$("appointmentTime").value,location:$("appointmentLocation").value.trim(),notes:$("appointmentNotes").value.trim()};state.appointments=editingAppointment?state.appointments.map(x=>x.id===editingAppointment?a:x):[...state.appointments,a];save();$("appointmentDialog").close();render()};
+    document.body.addEventListener("click",e=>{const bb=e.target.closest("[data-bill-action]");if(bb){const m=ensureMonth(),x=m.bills.find(y=>y.id===bb.dataset.id);if(bb.dataset.billAction==="toggle"){x.paid=!x.paid;x.paidAt=x.paid?new Date().toISOString():null}else if(bb.dataset.billAction==="edit"){openBill(x);return}else if(bb.dataset.billAction==="delete"&&confirm(`Delete "${x.name}"?`)){m.bills=m.bills.filter(y=>y.id!==x.id)}save();render()}const tb=e.target.closest("[data-template-action]");if(tb){const x=state.template.find(y=>y.id===tb.dataset.id);if(tb.dataset.templateAction==="edit"){openBill(x,"template");return}else if(confirm(`Delete "${x.name}" from the template?`)){state.template=state.template.filter(y=>y.id!==x.id);save();render()}}const ab=e.target.closest("[data-appointment-action]");if(ab){const a=state.appointments.find(x=>x.id===ab.dataset.id);if(ab.dataset.appointmentAction==="edit"){openAppointment(a);return}else if(confirm(`Delete "${a.title}"?`)){state.appointments=state.appointments.filter(x=>x.id!==a.id);save();render()}}const db=e.target.closest("[data-calendar-date]");if(db&&db.dataset.muted!=="true"){selectedDate=selectedDate===db.dataset.calendarDate?null:db.dataset.calendarDate;renderSchedule()}});
+    $("backupBtn").onclick=backup;$("backupSettingsBtn").onclick=backup;$("exportMonthBtn").onclick=()=>exportIcs(1);$("exportYearBtn").onclick=()=>exportIcs(12);$("testAlertBtn").onclick=async()=>{if(!("Notification" in window))return alert("Notifications are not supported.");const p=await Notification.requestPermission();if(p==="granted")new Notification("RavenBill 2.0",{body:"Your reminder alerts are ready.",icon:"/raven-logo.svg?v=30"})};$("resetMonthBtn").onclick=()=>{if(confirm("Replace this month with a fresh copy of the template?")){ensureMonth(selected,true);render()}};$("moreBtn").onclick=()=>$("moreSheet").classList.toggle("open");$("mobileMenu").onclick=()=>$("moreSheet").classList.toggle("open");
+    if("caches" in window)caches.keys().then(keys=>Promise.all(keys.filter(k=>!k.includes("ravenbill-final-v30")).map(k=>caches.delete(k))));if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js?v=30").catch(()=>{});render();
+  })();
   </script>
 </body>
 </html>
