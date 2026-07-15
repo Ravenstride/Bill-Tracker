@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const APP_VERSION = 1;
+  const APP_VERSION = 2;
   const STORAGE_KEY = "ravenbill.clean.v1";
   const LEGACY_KEY = "ravenbill.v30";
 
@@ -241,6 +241,15 @@
   function normalizeBill(bill, monthKeyValue) {
     const type = TYPE_META[bill?.type] ? bill.type : "standard";
     const amount = Math.max(0, num(bill?.amount ?? bill?.plannedPayment));
+    const now = new Date().toISOString();
+    const createdAt = bill?.createdAt || now;
+    const updatedAt = bill?.updatedAt || createdAt;
+    const createdTime = Date.parse(createdAt);
+    const updatedTime = Date.parse(updatedAt);
+    const inferredAmountEdit = bill?.amountEdited == null
+      && Number.isFinite(createdTime)
+      && Number.isFinite(updatedTime)
+      && updatedTime - createdTime > 1500;
     return {
       id: bill?.id || uuid(),
       templateId: bill?.templateId || bill?.sourceTemplateId || null,
@@ -275,8 +284,10 @@
       lender: String(bill?.lender || ""),
       remainingBalance: Math.max(0, num(bill?.remainingBalance)),
       custom: Boolean(bill?.custom),
-      createdAt: bill?.createdAt || new Date().toISOString(),
-      updatedAt: bill?.updatedAt || new Date().toISOString()
+      amountEdited: bill?.amountEdited === true || Boolean(bill?.custom) || inferredAmountEdit,
+      amountSourceMonth: /^\d{4}-\d{2}$/.test(String(bill?.amountSourceMonth || "")) ? bill.amountSourceMonth : null,
+      createdAt,
+      updatedAt
     };
   }
 
@@ -431,12 +442,60 @@
     if (template.type === "oneTime") return Math.max(0, num(template.amount));
     if (template.amountBehavior === "fixed") return Math.max(0, num(template.amount));
     if (template.amountBehavior === "manual") return 0;
-    if (previous && num(previous.amount) > 0) return Math.max(0, num(previous.amount));
+    if (previous) return Math.max(0, num(previous.amount));
     return Math.max(0, num(template.amount));
+  }
+
+  function copyTemplateDetailsToBill(bill, template, key) {
+    bill.name = template.name;
+    bill.type = template.type;
+    bill.category = template.category;
+    bill.dueDate = dateForMonth(key, template.dueDay);
+    bill.amountBehavior = template.amountBehavior;
+    bill.autopay = template.autopay;
+    bill.reminderDays = template.reminderDays;
+    bill.notes = template.notes;
+    bill.last4 = template.last4;
+    bill.creditLimit = template.creditLimit;
+    bill.paymentBehavior = template.paymentBehavior;
+    bill.paymentMethod = template.paymentMethod;
+    bill.renewalDate = template.renewalDate;
+    bill.subscriptionStatus = template.subscriptionStatus;
+    bill.lender = template.lender;
+    bill.remainingBalance = template.remainingBalance;
+  }
+
+  function generatedAmountForTemplate(template, key) {
+    return initialAmountForTemplate(template, key);
+  }
+
+  function refreshGeneratedBillAmount(bill, template, key) {
+    if (bill.amountEdited || bill.paid) return false;
+    const amount = generatedAmountForTemplate(template, key);
+    const previous = previousBillForTemplate(template.id, key);
+    const previousMonth = previous?.monthKey || null;
+    let changed = false;
+
+    if (template.type === "creditCard") {
+      if (num(bill.plannedPayment) !== amount || num(bill.amount) !== amount) changed = true;
+      bill.plannedPayment = amount;
+      bill.amount = amount;
+    } else if (num(bill.amount) !== amount) {
+      bill.amount = amount;
+      changed = true;
+    }
+
+    if (bill.amountSourceMonth !== previousMonth) {
+      bill.amountSourceMonth = previousMonth;
+      changed = true;
+    }
+    if (changed) bill.updatedAt = new Date().toISOString();
+    return changed;
   }
 
   function createBillInstance(template, key) {
     const amount = initialAmountForTemplate(template, key);
+    const previous = previousBillForTemplate(template.id, key);
     return normalizeBill({
       id: uuid(),
       templateId: template.id,
@@ -462,8 +521,93 @@
       renewalDate: template.renewalDate,
       subscriptionStatus: template.subscriptionStatus,
       lender: template.lender,
-      remainingBalance: template.remainingBalance
+      remainingBalance: template.remainingBalance,
+      amountEdited: false,
+      amountSourceMonth: previous?.monthKey || null
     }, key);
+  }
+
+  function reconcileMonthBills(key) {
+    const normalizedKey = normalizeMonthKey(key);
+    const month = state.months[normalizedKey];
+    if (!month) return false;
+    let changed = false;
+
+    month.bills = month.bills.map(rawBill => {
+      const bill = normalizeBill(rawBill, normalizedKey);
+      const template = bill.templateId
+        ? state.templates.find(item => item.id === bill.templateId)
+        : null;
+      if (!template || !templateOccursInMonth(template, normalizedKey)) return bill;
+      if (refreshGeneratedBillAmount(bill, template, normalizedKey)) changed = true;
+      return bill;
+    });
+
+    return changed;
+  }
+
+  function syncRecurringTemplate(templateId, fromMonth) {
+    const template = state.templates.find(item => item.id === templateId);
+    if (!template) return 0;
+    const keys = Object.keys(state.months)
+      .filter(key => key > fromMonth)
+      .sort();
+    let changedMonths = 0;
+
+    keys.forEach(key => {
+      if (!templateOccursInMonth(template, key)) return;
+      const month = state.months[key];
+      let bill = month.bills.find(item => item.templateId === templateId);
+      if (!bill) {
+        month.bills.push(createBillInstance(template, key));
+        bill = month.bills[month.bills.length - 1];
+        changedMonths += 1;
+      }
+      const beforeDetails = JSON.stringify({
+        name: bill.name,
+        type: bill.type,
+        category: bill.category,
+        dueDate: bill.dueDate,
+        amountBehavior: bill.amountBehavior,
+        autopay: bill.autopay,
+        reminderDays: bill.reminderDays,
+        notes: bill.notes,
+        last4: bill.last4,
+        creditLimit: bill.creditLimit,
+        paymentBehavior: bill.paymentBehavior,
+        paymentMethod: bill.paymentMethod,
+        renewalDate: bill.renewalDate,
+        subscriptionStatus: bill.subscriptionStatus,
+        lender: bill.lender,
+        remainingBalance: bill.remainingBalance
+      });
+      copyTemplateDetailsToBill(bill, template, key);
+      const afterDetails = JSON.stringify({
+        name: bill.name,
+        type: bill.type,
+        category: bill.category,
+        dueDate: bill.dueDate,
+        amountBehavior: bill.amountBehavior,
+        autopay: bill.autopay,
+        reminderDays: bill.reminderDays,
+        notes: bill.notes,
+        last4: bill.last4,
+        creditLimit: bill.creditLimit,
+        paymentBehavior: bill.paymentBehavior,
+        paymentMethod: bill.paymentMethod,
+        renewalDate: bill.renewalDate,
+        subscriptionStatus: bill.subscriptionStatus,
+        lender: bill.lender,
+        remainingBalance: bill.remainingBalance
+      });
+      if (beforeDetails !== afterDetails) {
+        bill.updatedAt = new Date().toISOString();
+        changedMonths += 1;
+      }
+      if (refreshGeneratedBillAmount(bill, template, key)) changedMonths += 1;
+    });
+
+    return changedMonths;
   }
 
   function ensureMonth(key, announceRepair = false) {
@@ -483,9 +627,9 @@
       month.bills.push(createBillInstance(template, normalizedKey));
       added += 1;
     });
-    month.bills = month.bills.map(bill => normalizeBill(bill, normalizedKey));
-    if (added) saveState();
-    if (announceRepair) toast(added ? `${added} missing bill${added === 1 ? "" : "s"} restored.` : "This month is already complete.", "success");
+    const changed = reconcileMonthBills(normalizedKey);
+    if (added || changed) saveState();
+    if (announceRepair) toast(added ? `${added} missing bill${added === 1 ? "" : "s"} restored.` : changed ? "Recurring amounts were refreshed." : "This month is already complete.", "success");
     return month;
   }
 
@@ -1393,7 +1537,7 @@
     });
   }
 
-  function applyDraftToBill(bill, draft) {
+  function applyDraftToBill(bill, draft, markAmountEdited = true, monthKeyValue = state.selectedMonth) {
     bill.name = draft.name;
     bill.type = draft.type;
     bill.category = draft.category;
@@ -1414,8 +1558,10 @@
     bill.subscriptionStatus = draft.subscriptionStatus;
     bill.lender = draft.lender;
     bill.remainingBalance = draft.remainingBalance;
+    bill.amountEdited = markAmountEdited;
+    bill.amountSourceMonth = markAmountEdited ? null : bill.amountSourceMonth;
     bill.updatedAt = new Date().toISOString();
-    return normalizeBill(bill, state.selectedMonth);
+    return normalizeBill(bill, monthKeyValue);
   }
 
   function saveBillDraft() {
@@ -1425,7 +1571,7 @@
       const index = month.bills.findIndex(bill => bill.id === ui.editingBillId);
       if (index < 0) return;
       const existing = month.bills[index];
-      month.bills[index] = applyDraftToBill(existing, draft);
+      month.bills[index] = applyDraftToBill(existing, draft, true, state.selectedMonth);
       if (draft.applyFuture && existing.templateId) {
         const templateIndex = state.templates.findIndex(template => template.id === existing.templateId);
         if (templateIndex >= 0) {
@@ -1433,6 +1579,7 @@
           updated.startMonth = state.templates[templateIndex].startMonth;
           updated.createdAt = state.templates[templateIndex].createdAt;
           state.templates[templateIndex] = updated;
+          syncRecurringTemplate(existing.templateId, state.selectedMonth);
         }
       }
       toast(`${draft.name} updated.`, "success");
@@ -1443,7 +1590,7 @@
       ensureMonth(monthKeyValue);
       const created = state.months[monthKeyValue].bills.find(bill => bill.templateId === template.id);
       if (created) {
-        const updated = applyDraftToBill(created, draft);
+        const updated = applyDraftToBill(created, draft, false, monthKeyValue);
         const index = state.months[monthKeyValue].bills.findIndex(bill => bill.id === created.id);
         state.months[monthKeyValue].bills[index] = updated;
       }
@@ -1538,6 +1685,8 @@
     }
     bill.plannedPayment = Math.max(0, amount);
     bill.amount = bill.plannedPayment;
+    bill.amountEdited = true;
+    bill.amountSourceMonth = null;
     bill.updatedAt = new Date().toISOString();
     saveState();
     toast(`Planned payment updated to ${formatMoney(amount)}.`, "success");

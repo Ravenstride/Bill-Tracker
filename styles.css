@@ -544,7 +544,7 @@ main { min-height: calc(100vh - var(--topbar)); padding: 18px 20px 38px; }
 
 .app-dialog {
   width: min(560px, calc(100vw - 28px));
-  max-height: min(840px, calc(100vh - 28px));
+  max-height: min(840px, calc(100dvh - 24px));
   padding: 0;
   border: 1px solid #29405c;
   border-radius: 14px;
@@ -553,14 +553,22 @@ main { min-height: calc(100vh - var(--topbar)); padding: 18px 20px 38px; }
   box-shadow: 0 28px 100px rgba(0, 0, 0, .65);
   overflow: hidden;
 }
+.app-dialog[open] { margin-block: auto; }
+.app-dialog > form {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  width: 100%;
+  max-height: min(840px, calc(100dvh - 24px));
+  min-height: 0;
+}
 .app-dialog::backdrop { background: rgba(0, 0, 0, .64); backdrop-filter: blur(3px); }
 .wide-dialog { width: min(790px, calc(100vw - 28px)); }
 .small-dialog { width: min(420px, calc(100vw - 28px)); }
 .dialog-header { display: flex; justify-content: space-between; gap: 16px; padding: 18px 20px 14px; border-bottom: 1px solid var(--line-soft); }
 .dialog-header h2 { margin: 0; font-size: 19px; }
 .dialog-header p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
-.dialog-body { max-height: calc(100vh - 250px); padding: 20px; overflow-y: auto; }
-.dialog-footer { display: flex; justify-content: flex-end; gap: 9px; padding: 14px 20px; border-top: 1px solid var(--line-soft); background: #08131f; }
+.dialog-body { min-height: 0; max-height: none; padding: 20px; overflow-y: auto; overscroll-behavior: contain; }
+.dialog-footer { position: relative; z-index: 2; display: flex; flex: 0 0 auto; justify-content: flex-end; gap: 9px; padding: 14px 20px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line-soft); background: #08131f; }
 .step-track { display: flex; justify-content: center; align-items: center; padding: 14px 20px 0; }
 .step-dot { display: grid; place-items: center; width: 27px; height: 27px; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); background: #0d1b2b; font-size: 11px; }
 .step-dot.active { border-color: #338aff; color: white; background: #1269e4; }
@@ -732,6 +740,15 @@ main { min-height: calc(100vh - var(--topbar)); padding: 18px 20px 38px; }
   .overview-breakdown { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; }
   .status-grid { grid-template-columns: 1fr; }
   .report-grid, .settings-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-height: 650px) {
+  .app-dialog,
+  .app-dialog > form { max-height: calc(100dvh - 12px); }
+  .dialog-header { padding-block: 12px 10px; }
+  .step-track { padding-top: 9px; }
+  .dialog-body { padding-block: 14px; }
+  .dialog-footer { padding-block: 10px; }
 }
 
 @media (max-width: 680px) {
