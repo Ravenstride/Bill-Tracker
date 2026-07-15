@@ -1,0 +1,358 @@
+diff -uNr ravenbill-old/app.js ravenbill-new/app.js
+--- ravenbill-old/app.js	2026-07-15 14:39:52.002088825 +0000
++++ ravenbill-new/app.js	2026-07-15 14:39:52.017825798 +0000
+@@ -1,7 +1,7 @@
+ (() => {
+   "use strict";
+ 
+-  const APP_VERSION = 1;
++  const APP_VERSION = 2;
+   const STORAGE_KEY = "ravenbill.clean.v1";
+   const LEGACY_KEY = "ravenbill.v30";
+ 
+@@ -241,6 +241,15 @@
+   function normalizeBill(bill, monthKeyValue) {
+     const type = TYPE_META[bill?.type] ? bill.type : "standard";
+     const amount = Math.max(0, num(bill?.amount ?? bill?.plannedPayment));
++    const now = new Date().toISOString();
++    const createdAt = bill?.createdAt || now;
++    const updatedAt = bill?.updatedAt || createdAt;
++    const createdTime = Date.parse(createdAt);
++    const updatedTime = Date.parse(updatedAt);
++    const inferredAmountEdit = bill?.amountEdited == null
++      && Number.isFinite(createdTime)
++      && Number.isFinite(updatedTime)
++      && updatedTime - createdTime > 1500;
+     return {
+       id: bill?.id || uuid(),
+       templateId: bill?.templateId || bill?.sourceTemplateId || null,
+@@ -275,8 +284,10 @@
+       lender: String(bill?.lender || ""),
+       remainingBalance: Math.max(0, num(bill?.remainingBalance)),
+       custom: Boolean(bill?.custom),
+-      createdAt: bill?.createdAt || new Date().toISOString(),
+-      updatedAt: bill?.updatedAt || new Date().toISOString()
++      amountEdited: bill?.amountEdited === true || Boolean(bill?.custom) || inferredAmountEdit,
++      amountSourceMonth: /^\d{4}-\d{2}$/.test(String(bill?.amountSourceMonth || "")) ? bill.amountSourceMonth : null,
++      createdAt,
++      updatedAt
+     };
+   }
+ 
+@@ -432,12 +443,60 @@
+     if (template.type === "oneTime") return Math.max(0, num(template.amount));
+     if (template.amountBehavior === "fixed") return Math.max(0, num(template.amount));
+     if (template.amountBehavior === "manual") return 0;
+-    if (previous && num(previous.amount) > 0) return Math.max(0, num(previous.amount));
++    if (previous) return Math.max(0, num(previous.amount));
+     return Math.max(0, num(template.amount));
+   }
+ 
++  function copyTemplateDetailsToBill(bill, template, key) {
++    bill.name = template.name;
++    bill.type = template.type;
++    bill.category = template.category;
++    bill.dueDate = dateForMonth(key, template.dueDay);
++    bill.amountBehavior = template.amountBehavior;
++    bill.autopay = template.autopay;
++    bill.reminderDays = template.reminderDays;
++    bill.notes = template.notes;
++    bill.last4 = template.last4;
++    bill.creditLimit = template.creditLimit;
++    bill.paymentBehavior = template.paymentBehavior;
++    bill.paymentMethod = template.paymentMethod;
++    bill.renewalDate = template.renewalDate;
++    bill.subscriptionStatus = template.subscriptionStatus;
++    bill.lender = template.lender;
++    bill.remainingBalance = template.remainingBalance;
++  }
++
++  function generatedAmountForTemplate(template, key) {
++    return initialAmountForTemplate(template, key);
++  }
++
++  function refreshGeneratedBillAmount(bill, template, key) {
++    if (bill.amountEdited || bill.paid) return false;
++    const amount = generatedAmountForTemplate(template, key);
++    const previous = previousBillForTemplate(template.id, key);
++    const previousMonth = previous?.monthKey || null;
++    let changed = false;
++
++    if (template.type === "creditCard") {
++      if (num(bill.plannedPayment) !== amount || num(bill.amount) !== amount) changed = true;
++      bill.plannedPayment = amount;
++      bill.amount = amount;
++    } else if (num(bill.amount) !== amount) {
++      bill.amount = amount;
++      changed = true;
++    }
++
++    if (bill.amountSourceMonth !== previousMonth) {
++      bill.amountSourceMonth = previousMonth;
++      changed = true;
++    }
++    if (changed) bill.updatedAt = new Date().toISOString();
++    return changed;
++  }
++
+   function createBillInstance(template, key) {
+     const amount = initialAmountForTemplate(template, key);
++    const previous = previousBillForTemplate(template.id, key);
+     return normalizeBill({
+       id: uuid(),
+       templateId: template.id,
+@@ -463,10 +522,95 @@
+       renewalDate: template.renewalDate,
+       subscriptionStatus: template.subscriptionStatus,
+       lender: template.lender,
+-      remainingBalance: template.remainingBalance
++      remainingBalance: template.remainingBalance,
++      amountEdited: false,
++      amountSourceMonth: previous?.monthKey || null
+     }, key);
+   }
+ 
++  function reconcileMonthBills(key) {
++    const normalizedKey = normalizeMonthKey(key);
++    const month = state.months[normalizedKey];
++    if (!month) return false;
++    let changed = false;
++
++    month.bills = month.bills.map(rawBill => {
++      const bill = normalizeBill(rawBill, normalizedKey);
++      const template = bill.templateId
++        ? state.templates.find(item => item.id === bill.templateId)
++        : null;
++      if (!template || !templateOccursInMonth(template, normalizedKey)) return bill;
++      if (refreshGeneratedBillAmount(bill, template, normalizedKey)) changed = true;
++      return bill;
++    });
++
++    return changed;
++  }
++
++  function syncRecurringTemplate(templateId, fromMonth) {
++    const template = state.templates.find(item => item.id === templateId);
++    if (!template) return 0;
++    const keys = Object.keys(state.months)
++      .filter(key => key > fromMonth)
++      .sort();
++    let changedMonths = 0;
++
++    keys.forEach(key => {
++      if (!templateOccursInMonth(template, key)) return;
++      const month = state.months[key];
++      let bill = month.bills.find(item => item.templateId === templateId);
++      if (!bill) {
++        month.bills.push(createBillInstance(template, key));
++        bill = month.bills[month.bills.length - 1];
++        changedMonths += 1;
++      }
++      const beforeDetails = JSON.stringify({
++        name: bill.name,
++        type: bill.type,
++        category: bill.category,
++        dueDate: bill.dueDate,
++        amountBehavior: bill.amountBehavior,
++        autopay: bill.autopay,
++        reminderDays: bill.reminderDays,
++        notes: bill.notes,
++        last4: bill.last4,
++        creditLimit: bill.creditLimit,
++        paymentBehavior: bill.paymentBehavior,
++        paymentMethod: bill.paymentMethod,
++        renewalDate: bill.renewalDate,
++        subscriptionStatus: bill.subscriptionStatus,
++        lender: bill.lender,
++        remainingBalance: bill.remainingBalance
++      });
++      copyTemplateDetailsToBill(bill, template, key);
++      const afterDetails = JSON.stringify({
++        name: bill.name,
++        type: bill.type,
++        category: bill.category,
++        dueDate: bill.dueDate,
++        amountBehavior: bill.amountBehavior,
++        autopay: bill.autopay,
++        reminderDays: bill.reminderDays,
++        notes: bill.notes,
++        last4: bill.last4,
++        creditLimit: bill.creditLimit,
++        paymentBehavior: bill.paymentBehavior,
++        paymentMethod: bill.paymentMethod,
++        renewalDate: bill.renewalDate,
++        subscriptionStatus: bill.subscriptionStatus,
++        lender: bill.lender,
++        remainingBalance: bill.remainingBalance
++      });
++      if (beforeDetails !== afterDetails) {
++        bill.updatedAt = new Date().toISOString();
++        changedMonths += 1;
++      }
++      if (refreshGeneratedBillAmount(bill, template, key)) changedMonths += 1;
++    });
++
++    return changedMonths;
++  }
++
+   function ensureMonth(key, announceRepair = false) {
+     const normalizedKey = normalizeMonthKey(key);
+     if (!state.months[normalizedKey]) {
+@@ -484,9 +628,9 @@
+       month.bills.push(createBillInstance(template, normalizedKey));
+       added += 1;
+     });
+-    month.bills = month.bills.map(bill => normalizeBill(bill, normalizedKey));
+-    if (added) saveState();
+-    if (announceRepair) toast(added ? `${added} missing bill${added === 1 ? "" : "s"} restored.` : "This month is already complete.", "success");
++    const changed = reconcileMonthBills(normalizedKey);
++    if (added || changed) saveState();
++    if (announceRepair) toast(added ? `${added} missing bill${added === 1 ? "" : "s"} restored.` : changed ? "Recurring amounts were refreshed." : "This month is already complete.", "success");
+     return month;
+   }
+ 
+@@ -1423,7 +1567,7 @@
+     });
+   }
+ 
+-  function applyDraftToBill(bill, draft) {
++  function applyDraftToBill(bill, draft, markAmountEdited = true, monthKeyValue = state.selectedMonth) {
+     bill.name = draft.name;
+     bill.type = draft.type;
+     bill.category = draft.category;
+@@ -1444,8 +1588,10 @@
+     bill.subscriptionStatus = draft.subscriptionStatus;
+     bill.lender = draft.lender;
+     bill.remainingBalance = draft.remainingBalance;
++    bill.amountEdited = markAmountEdited;
++    bill.amountSourceMonth = markAmountEdited ? null : bill.amountSourceMonth;
+     bill.updatedAt = new Date().toISOString();
+-    return normalizeBill(bill, state.selectedMonth);
++    return normalizeBill(bill, monthKeyValue);
+   }
+ 
+   function saveBillDraft() {
+@@ -1455,7 +1601,7 @@
+       const index = month.bills.findIndex(bill => bill.id === ui.editingBillId);
+       if (index < 0) return;
+       const existing = month.bills[index];
+-      month.bills[index] = applyDraftToBill(existing, draft);
++      month.bills[index] = applyDraftToBill(existing, draft, true, state.selectedMonth);
+       if (draft.applyFuture && existing.templateId) {
+         const templateIndex = state.templates.findIndex(template => template.id === existing.templateId);
+         if (templateIndex >= 0) {
+@@ -1463,6 +1609,7 @@
+           updated.startMonth = state.templates[templateIndex].startMonth;
+           updated.createdAt = state.templates[templateIndex].createdAt;
+           state.templates[templateIndex] = updated;
++          syncRecurringTemplate(existing.templateId, state.selectedMonth);
+         }
+       }
+       toast(`${draft.name} updated.`, "success");
+@@ -1473,7 +1620,7 @@
+       ensureMonth(monthKeyValue);
+       const created = state.months[monthKeyValue].bills.find(bill => bill.templateId === template.id);
+       if (created) {
+-        const updated = applyDraftToBill(created, draft);
++        const updated = applyDraftToBill(created, draft, false, monthKeyValue);
+         const index = state.months[monthKeyValue].bills.findIndex(bill => bill.id === created.id);
+         state.months[monthKeyValue].bills[index] = updated;
+       }
+@@ -1568,6 +1715,8 @@
+     }
+     bill.plannedPayment = Math.max(0, amount);
+     bill.amount = bill.plannedPayment;
++    bill.amountEdited = true;
++    bill.amountSourceMonth = null;
+     bill.updatedAt = new Date().toISOString();
+     saveState();
+     toast(`Planned payment updated to ${formatMoney(amount)}.`, "success");
+diff -uNr ravenbill-old/index.html ravenbill-new/index.html
+--- ravenbill-old/index.html	2026-07-15 14:39:52.071425792 +0000
++++ ravenbill-new/index.html	2026-07-15 14:39:52.034746119 +0000
+@@ -8,7 +8,7 @@
+   <title>RavenBill 2.0</title>
+   <link rel="icon" href="rb-icon.svg" type="image/svg+xml">
+   <link rel="manifest" href="manifest.webmanifest">
+-  <link rel="stylesheet" href="styles.css">
++  <link rel="stylesheet" href="styles.css?v=2">
+ </head>
+ <body>
+   <div class="app-shell">
+@@ -220,6 +220,6 @@
+   <input id="restoreFile" type="file" accept="application/json,.json" class="visually-hidden">
+   <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+ 
+-  <script src="app.js" defer></script>
++  <script src="app.js?v=2" defer></script>
+ </body>
+ </html>
+diff -uNr ravenbill-old/styles.css ravenbill-new/styles.css
+--- ravenbill-old/styles.css	2026-07-15 14:39:52.010049155 +0000
++++ ravenbill-new/styles.css	2026-07-15 14:39:52.026266933 +0000
+@@ -544,7 +544,7 @@
+ 
+ .app-dialog {
+   width: min(560px, calc(100vw - 28px));
+-  max-height: min(840px, calc(100vh - 28px));
++  max-height: min(840px, calc(100dvh - 24px));
+   padding: 0;
+   border: 1px solid #29405c;
+   border-radius: 14px;
+@@ -553,14 +553,22 @@
+   box-shadow: 0 28px 100px rgba(0, 0, 0, .65);
+   overflow: hidden;
+ }
++.app-dialog[open] { margin-block: auto; }
++.app-dialog > form {
++  display: grid;
++  grid-template-rows: auto auto minmax(0, 1fr) auto;
++  width: 100%;
++  max-height: min(840px, calc(100dvh - 24px));
++  min-height: 0;
++}
+ .app-dialog::backdrop { background: rgba(0, 0, 0, .64); backdrop-filter: blur(3px); }
+ .wide-dialog { width: min(790px, calc(100vw - 28px)); }
+ .small-dialog { width: min(420px, calc(100vw - 28px)); }
+ .dialog-header { display: flex; justify-content: space-between; gap: 16px; padding: 18px 20px 14px; border-bottom: 1px solid var(--line-soft); }
+ .dialog-header h2 { margin: 0; font-size: 19px; }
+ .dialog-header p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+-.dialog-body { max-height: calc(100vh - 250px); padding: 20px; overflow-y: auto; }
+-.dialog-footer { display: flex; justify-content: flex-end; gap: 9px; padding: 14px 20px; border-top: 1px solid var(--line-soft); background: #08131f; }
++.dialog-body { min-height: 0; max-height: none; padding: 20px; overflow-y: auto; overscroll-behavior: contain; }
++.dialog-footer { position: relative; z-index: 2; display: flex; flex: 0 0 auto; justify-content: flex-end; gap: 9px; padding: 14px 20px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line-soft); background: #08131f; }
+ .step-track { display: flex; justify-content: center; align-items: center; padding: 14px 20px 0; }
+ .step-dot { display: grid; place-items: center; width: 27px; height: 27px; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); background: #0d1b2b; font-size: 11px; }
+ .step-dot.active { border-color: #338aff; color: white; background: #1269e4; }
+@@ -734,6 +742,15 @@
+   .report-grid, .settings-grid { grid-template-columns: 1fr; }
+ }
+ 
++@media (max-height: 650px) {
++  .app-dialog,
++  .app-dialog > form { max-height: calc(100dvh - 12px); }
++  .dialog-header { padding-block: 12px 10px; }
++  .step-track { padding-top: 9px; }
++  .dialog-body { padding-block: 14px; }
++  .dialog-footer { padding-block: 10px; }
++}
++
+ @media (max-width: 680px) {
+   :root { --topbar: auto; }
+   body { padding-bottom: 68px; }
+diff -uNr ravenbill-old/sw.js ravenbill-new/sw.js
+--- ravenbill-old/sw.js	2026-07-15 14:39:52.080349871 +0000
++++ ravenbill-new/sw.js	2026-07-15 14:39:52.042125890 +0000
+@@ -1,9 +1,9 @@
+-const CACHE_NAME = "ravenbill-clean-v1";
++const CACHE_NAME = "ravenbill-clean-v2";
+ const APP_SHELL = [
+   "/",
+   "/index.html",
+-  "/styles.css",
+-  "/app.js",
++  "/styles.css?v=2",
++  "/app.js?v=2",
+   "/rb-icon.svg",
+   "/manifest.webmanifest"
+ ];
