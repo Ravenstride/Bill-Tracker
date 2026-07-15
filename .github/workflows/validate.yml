@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: write
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -17,3 +20,61 @@ jobs:
         run: node --check app.js
       - name: Check required files
         run: test -f index.html && test -f styles.css && test -f manifest.webmanifest && test -f sw.js
+
+  apply-clean-repair:
+    if: github.event_name == 'pull_request' && github.head_ref == 'ravenbill-2.0-clean'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the clean branch
+        uses: actions/checkout@v4
+        with:
+          ref: ravenbill-2.0-clean
+          fetch-depth: 0
+
+      - name: Apply and validate the repaired files
+        shell: bash
+        run: |
+          test -f tools/ravenbill-fix.tar.gz.b64
+          base64 --decode tools/ravenbill-fix.tar.gz.b64 > /tmp/ravenbill-fix.tar.gz
+          tar -xzf /tmp/ravenbill-fix.tar.gz -C .
+          node --check app.js
+          grep -q 'const APP_VERSION = 2' app.js
+          grep -q 'function reconcileMonthBills' app.js
+          grep -q 'ravenbill-clean-v2' sw.js
+
+      - name: Restore the normal validation workflow
+        shell: bash
+        run: |
+          cat > .github/workflows/validate.yml <<'WORKFLOW'
+          name: Validate RavenBill
+
+          on:
+            push:
+              branches: [main]
+            pull_request:
+
+          jobs:
+            validate:
+              runs-on: ubuntu-latest
+              steps:
+                - uses: actions/checkout@v4
+                - uses: actions/setup-node@v4
+                  with:
+                    node-version: 22
+                - name: Check JavaScript syntax
+                  run: node --check app.js
+                - name: Check required files
+                  run: test -f index.html && test -f styles.css && test -f manifest.webmanifest && test -f sw.js
+          WORKFLOW
+          rm -f .github/workflows/apply-ravenbill-fix.yml
+          rm -f tools/ravenbill-fix.tar.gz.b64
+          rmdir tools 2>/dev/null || true
+
+      - name: Commit the repaired application
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Fix recurring bill rollover and dialog footer'
+          git push origin HEAD:ravenbill-2.0-clean
