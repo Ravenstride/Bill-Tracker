@@ -23,4 +23,12 @@ This branch contains a clean, local-first rebuild of RavenBill.
 - Backup and restore use a JSON file stored by the user.
 - Data remains in browser local storage unless exported.
 
-No Vercel deployment is required to test this branch locally.
+## Test without Vercel
+
+1. Download and extract the `ravenbill-2.0-clean` branch.
+2. Open `index.html` in Chrome or Edge.
+3. Use **Load Demo Data** in Settings for a quick walkthrough, or begin adding real bills.
+
+The bill tracker works from the extracted folder. Installation as a PWA, service-worker caching, and browser notifications require the app to be served over HTTP or HTTPS.
+
+Nothing on this branch has been deployed to Vercel.
