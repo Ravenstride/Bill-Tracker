@@ -32,12 +32,16 @@
         if (!response.ok) throw new Error(`Could not load RavenBill (${response.status})`);
         let source = await response.text();
 
-        const autopayPattern = /function priorAmount\(templateId,date\)\{[\s\S]*?\}function ensureMonth\(date=selected,force=false\)\{[\s\S]*?\}function bills\(\)/;
+        const autopayPattern = /function priorAmount\(templateId,date\)\{[\s\S]*?\}\s*function ensureMonth\(date=selected,force=false\)\{[\s\S]*?\}\s*function bills\(\)/;
         const autopayReplacement = `function sameRecurringBill(a,b){if(!a||!b)return false;if(a.sourceTemplateId&&b.sourceTemplateId&&a.sourceTemplateId===b.sourceTemplateId)return true;if(a.id&&b.sourceTemplateId&&a.id===b.sourceTemplateId)return true;if(b.id&&a.sourceTemplateId&&b.id===a.sourceTemplateId)return true;return String(a.name||"").trim().toLowerCase()===String(b.name||"").trim().toLowerCase()&&Number(a.dueDay)===Number(b.dueDay)&&String(a.category||"")===String(b.category||"")&&String(a.frequency||"monthly")===String(b.frequency||"monthly")}
         function priorAutopayRecord(seed,date){let nearestCarried=null;for(let i=1;i<=36;i++){const priorDate=shiftMonth(date,-i),m=state.months[monthKey(priorDate)],match=m?.bills?.find(x=>sameRecurringBill(x,seed)&&x.autopay&&Number(x.amount)>0);if(!match)continue;const record={bill:match,key:monthKey(priorDate)};if(!match._autopayCarried)return record;if(!nearestCarried)nearestCarried=record}return nearestCarried}
         function makeMonthBill(template,date){const prior=priorAutopayRecord(template,date),autopay=Boolean(template.autopay||prior?.bill?.autopay),carriedAmount=prior&&Number(prior.bill.amount)>0?Number(prior.bill.amount):null;return{...template,id:uuid(),sourceTemplateId:template.id,autopay,amount:autopay&&carriedAmount!==null?carriedAmount:Number(template.amount||0),paid:false,paidAt:null,_autopayCarried:Boolean(autopay&&carriedAmount!==null),_autopaySource:prior?.key||null}}
         function ensureMonth(date=selected,force=false){const k=monthKey(date),activeTemplates=state.template.filter(t=>t.frequency==="monthly"||(t.frequency==="yearly"&&Number(t.yearlyMonth)===date.getMonth()));if(!state.months[k]||force){state.months[k]={createdAt:new Date().toISOString(),bills:activeTemplates.map(t=>makeMonthBill(t,date))};save();return state.months[k]}const month=state.months[k];let changed=false;activeTemplates.forEach(template=>{let bill=month.bills.find(x=>sameRecurringBill(x,template));if(!bill){month.bills.push(makeMonthBill(template,date));changed=true;return}const prior=priorAutopayRecord(template,date),shouldAutopay=Boolean(bill.autopay||template.autopay||prior?.bill?.autopay);if(shouldAutopay&&!bill.autopay){bill.autopay=true;changed=true}if(shouldAutopay&&prior?.bill&&Number(prior.bill.amount)>0){const nextAmount=Number(prior.bill.amount),currentAmount=Number(bill.amount),mayRefresh=!Number.isFinite(currentAmount)||currentAmount===0||bill._autopayCarried===true;if(mayRefresh&&currentAmount!==nextAmount){bill.amount=nextAmount;changed=true}if(mayRefresh&&bill._autopayCarried!==true){bill._autopayCarried=true;changed=true}if(mayRefresh&&bill._autopaySource!==prior.key){bill._autopaySource=prior.key;changed=true}}});if(changed)save();return month}function bills()`;
-        if (autopayPattern.test(source)) source = source.replace(autopayPattern, autopayReplacement);
+        if (autopayPattern.test(source)) {
+          source = source.replace(autopayPattern, autopayReplacement);
+        } else {
+          console.warn('RavenBill autopay reconciliation patch was not applied.');
+        }
 
         const doc = new DOMParser().parseFromString(source, 'text/html');
         doc.title = 'RavenBill 2.0';
