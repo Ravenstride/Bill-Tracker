@@ -1,9 +1,9 @@
-const CACHE = "ravenbill-rb-final-v42";
+const CACHE = "ravenbill-rb-final-v43";
 const ASSETS = [
-  "/shell.html?v=42",
-  "/index.html?application=1&version=42",
-  "/rb-icon.svg?v=42",
-  "/manifest.webmanifest?v=42"
+  "/shell.html?v=43",
+  "/index.html?application=1&version=43",
+  "/rb-icon.svg?v=43",
+  "/manifest.webmanifest?v=43"
 ];
 
 self.addEventListener("install", (event) => {
@@ -28,7 +28,7 @@ self.addEventListener("fetch", (event) => {
         caches.open(CACHE).then((cache) => cache.put(event.request, copy));
         return response;
       })
-      .catch(() => caches.match(event.request).then((cached) => cached || caches.match("/shell.html?v=42")))
+      .catch(() => caches.match(event.request).then((cached) => cached || caches.match("/shell.html?v=43")))
   );
 });
 
@@ -38,7 +38,7 @@ self.addEventListener("notificationclick", (event) => {
     clients.matchAll({ type: "window", includeUncontrolled: true }).then((windows) => {
       const existing = windows.find((client) => "focus" in client);
       if (existing) return existing.focus();
-      return clients.openWindow("/shell.html?v=42");
+      return clients.openWindow("/shell.html?v=43");
     })
   );
 });
