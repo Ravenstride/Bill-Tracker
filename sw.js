@@ -1,9 +1,11 @@
-const CACHE_NAME = "ravenbill-clean-v2";
+const CACHE_NAME = "ravenbill-21-milestone1-v1";
 const APP_SHELL = [
   "/",
   "/index.html",
   "/styles.css?v=2",
+  "/ui-21.css?v=1",
   "/app.js?v=2",
+  "/ui-21.js?v=1",
   "/rb-icon.svg",
   "/manifest.webmanifest"
 ];
