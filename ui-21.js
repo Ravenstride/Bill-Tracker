@@ -4,6 +4,15 @@
   const body = document.body;
   body.classList.add("rb21");
 
+  function escapeHTML(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
   function greeting() {
     const hour = new Date().getHours();
     if (hour < 12) return "Good Morning";
@@ -26,7 +35,7 @@
   function rowData(row) {
     const billCell = row.querySelector('[data-label="Bill"]');
     return {
-      id: row.dataset.billId,
+      id: row.dataset.billId || "",
       name: text(billCell?.querySelector("strong"), "Bill"),
       secondary: text(billCell?.querySelector("small"), "Scheduled bill"),
       icon: text(billCell?.querySelector(".bill-avatar"), "•"),
@@ -37,13 +46,13 @@
 
   function agendaItem(item) {
     return `
-      <button class="rb21-agenda-item" data-action="open-bill" data-bill-id="${item.id}">
-        <span class="rb21-agenda-icon">${item.icon}</span>
+      <button class="rb21-agenda-item" data-action="open-bill" data-bill-id="${escapeHTML(item.id)}">
+        <span class="rb21-agenda-icon">${escapeHTML(item.icon)}</span>
         <span class="rb21-agenda-copy">
-          <strong>${item.name}</strong>
-          <small>${item.secondary} · ${item.due}</small>
+          <strong>${escapeHTML(item.name)}</strong>
+          <small>${escapeHTML(item.secondary)} · ${escapeHTML(item.due)}</small>
         </span>
-        <span class="rb21-agenda-amount">${item.amount}</span>
+        <span class="rb21-agenda-amount">${escapeHTML(item.amount)}</span>
       </button>`;
   }
 
@@ -62,7 +71,7 @@
       <section class="rb21-intro">
         <div>
           <h2>${greeting()} <span aria-hidden="true">👋</span></h2>
-          <p>${longDate()} · Here is what needs your attention.</p>
+          <p>${escapeHTML(longDate())} · Here is what needs your attention.</p>
         </div>
         <span class="rb21-version">RavenBill 2.1 Preview</span>
       </section>
