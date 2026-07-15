@@ -1,17 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="RavenBill RB app icon">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="RavenBill RB icon">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#071a2d"/>
-      <stop offset="1" stop-color="#020913"/>
-    </linearGradient>
-    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#55b5ff"/>
-      <stop offset="0.48" stop-color="#0f7fff"/>
-      <stop offset="1" stop-color="#0758c4"/>
+    <linearGradient id="g" x1="70" y1="50" x2="440" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#238cff"/>
+      <stop offset="1" stop-color="#0b3f9b"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <rect x="15" y="15" width="482" height="482" rx="100" fill="none" stroke="#173a5e" stroke-width="6"/>
-  <circle cx="256" cy="256" r="174" fill="#04101e" stroke="url(#blue)" stroke-width="16"/>
-  <text x="256" y="305" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="174" font-weight="700" letter-spacing="-18" fill="#f8fbff">R<tspan fill="url(#blue)">B</tspan></text>
+  <rect width="512" height="512" rx="108" fill="#07111f"/>
+  <rect x="28" y="28" width="456" height="456" rx="92" fill="url(#g)"/>
+  <path fill="#fff" d="M116 134h121c75 0 116 35 116 94 0 39-20 68-57 82l78 68h-73l-68-60h-54v60h-63V134Zm63 54v78h53c36 0 56-13 56-39 0-26-20-39-56-39h-53Z"/>
+  <path fill="#d8ecff" d="M316 134h51c45 0 74 22 74 59 0 24-12 42-34 52 29 9 45 30 45 59 0 47-35 74-93 74h-43v-55h38c23 0 35-9 35-27 0-17-12-26-35-26h-38v-49h30c20 0 30-8 30-23 0-15-10-23-30-23h-30v-41Z"/>
 </svg>
