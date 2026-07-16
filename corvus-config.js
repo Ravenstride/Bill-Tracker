@@ -1,0 +1,1 @@
+window.CORVUS_SUPABASE={url:'https://backppaojjbhyaksprfe.supabase.co',publishableKey:'sb_publishable_e-NOWhUbjmEPTV-FI6wscg_JnMyxhhu'};
