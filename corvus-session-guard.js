@@ -6,7 +6,7 @@ let client=null,timer=null,lastWrite=0,redirecting=false;
 const loginUrl=reason=>`login.html${reason?`?reason=${encodeURIComponent(reason)}`:''}`;
 function readSettings(){try{return JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')}catch{return{}}}
 function timeoutMs(){const value=Number(readSettings().autoLockMinutes??30);return value>0?value*60*1000:30*60*1000}
-function markActivity(){if(redirecting)return;const now=Date.now();sessionStorage.setItem(SESSION_KEY,'1');if(now-lastWrite>5000){sessionStorage.setItem(LAST_KEY,String(now));lastWrite=now}}
+function markActivity(){if(redirecting)return;const now=Date.now();sessionStorage.setItem(SESSION_KEY,'1');if(now-lastWrite>5000||!sessionStorage.getItem(LAST_KEY)){sessionStorage.setItem(LAST_KEY,String(now));lastWrite=now}}
 function clearSessionMarker(){sessionStorage.removeItem(SESSION_KEY);sessionStorage.removeItem(LAST_KEY)}
 function goToLogin(reason){if(redirecting)return;redirecting=true;clearInterval(timer);clearSessionMarker();location.replace(loginUrl(reason))}
 async function lock(reason='locked'){
@@ -28,9 +28,12 @@ async function boot(){
   if(!cfg?.url||!cfg?.publishableKey||!window.supabase){goToLogin('setup');return}
   client=window.supabase.createClient(cfg.url,cfg.publishableKey);
   if(!await verifySession('signin'))return;
-  if(sessionStorage.getItem(SESSION_KEY)!=='1'){await lock('closed');return}
-  const last=Number(sessionStorage.getItem(LAST_KEY)||0);
-  if(!last||Date.now()-last>timeoutMs()){await lock('timeout');return}
+  // A valid Supabase session is the source of truth. Some mobile/PWA
+  // navigations create a fresh sessionStorage context, so rebuild the
+  // tab activity marker instead of incorrectly signing the user out.
+  if(sessionStorage.getItem(SESSION_KEY)!=='1')markActivity();
+  const last=Number(sessionStorage.getItem(LAST_KEY)||Date.now());
+  if(Date.now()-last>timeoutMs()){await lock('timeout');return}
   client.auth.onAuthStateChange(event=>{
     if(event==='SIGNED_OUT')goToLogin('signin');
   });
@@ -43,7 +46,7 @@ async function boot(){
     if(!await verifySession('signin'))return;
     const seen=Number(sessionStorage.getItem(LAST_KEY)||0);
     if(!seen||Date.now()-seen>timeoutMs())lock('timeout');
-  },5000);
+  },15000);
   window.CorvusSession={lock:()=>lock('manual'),activity:markActivity};
   window.dispatchEvent(new CustomEvent('corvus-session-ready'));
 }
