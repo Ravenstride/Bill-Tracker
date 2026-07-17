@@ -1,12 +1,7 @@
-const CACHE_NAME = "ravenbill-21-milestone1-v1";
+const CACHE_NAME = "corvus-planner-m15-v2";
 const APP_SHELL = [
   "/",
   "/index.html",
-  "/styles.css?v=2",
-  "/ui-21.css?v=1",
-  "/app.js?v=2",
-  "/ui-21.js?v=1",
-  "/rb-icon.svg",
   "/manifest.webmanifest"
 ];
 
@@ -28,31 +23,20 @@ self.addEventListener("fetch", event => {
   const requestUrl = new URL(event.request.url);
   if (requestUrl.origin !== self.location.origin) return;
 
-  if (event.request.mode === "navigate") {
-    event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put("/index.html", copy));
-          return response;
-        })
-        .catch(() => caches.match("/index.html"))
-    );
-    return;
-  }
-
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      const network = fetch(event.request)
-        .then(response => {
-          if (response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
-          }
-          return response;
-        })
-        .catch(() => cached);
-      return cached || network;
-    })
+    fetch(event.request)
+      .then(response => {
+        if (response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+        }
+        return response;
+      })
+      .catch(async () => {
+        const cached = await caches.match(event.request);
+        if (cached) return cached;
+        if (event.request.mode === "navigate") return caches.match("/index.html");
+        throw new Error("Offline and resource is not cached");
+      })
   );
 });
