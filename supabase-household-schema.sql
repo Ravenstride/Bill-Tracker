@@ -35,7 +35,7 @@ create table if not exists public.corvus_household_state (
 
 create or replace function public.corvus_is_household_member(target_household uuid)
 returns boolean language sql stable security definer set search_path = public as $$
-  select exists (select 1 from public.corvus_household_members where household_id = target_household and user_id = auth.uid());
+  select exists (select 1 from public.corvus_household_members where household_id=target_household and user_id=auth.uid());
 $$;
 
 create or replace function public.corvus_create_household(household_name text)
@@ -77,18 +77,61 @@ begin
 end;
 $$;
 
+create or replace function public.corvus_leave_household()
+returns boolean language plpgsql security definer set search_path = public as $$
+declare member_row public.corvus_household_members%rowtype; member_count integer;
+begin
+  if auth.uid() is null then raise exception 'Not signed in'; end if;
+  select * into member_row from public.corvus_household_members where user_id=auth.uid() limit 1;
+  if member_row.household_id is null then raise exception 'This account is not in a household'; end if;
+  if member_row.role='owner' then
+    select count(*) into member_count from public.corvus_household_members where household_id=member_row.household_id;
+    if member_count>1 then raise exception 'Transfer ownership before leaving the household'; end if;
+    raise exception 'Delete the household instead of leaving as its only owner';
+  end if;
+  delete from public.corvus_household_members where household_id=member_row.household_id and user_id=auth.uid();
+  return true;
+end;
+$$;
+
+create or replace function public.corvus_remove_household_member(target_user uuid)
+returns boolean language plpgsql security definer set search_path = public as $$
+declare hid uuid;
+begin
+  if auth.uid() is null then raise exception 'Not signed in'; end if;
+  select household_id into hid from public.corvus_household_members where user_id=auth.uid() and role='owner' limit 1;
+  if hid is null then raise exception 'Only the household owner can remove members'; end if;
+  if target_user=auth.uid() then raise exception 'The owner cannot remove themselves'; end if;
+  if not exists(select 1 from public.corvus_household_members where household_id=hid and user_id=target_user and role='member') then raise exception 'Household member was not found'; end if;
+  delete from public.corvus_household_members where household_id=hid and user_id=target_user;
+  return true;
+end;
+$$;
+
+create or replace function public.corvus_transfer_household_ownership(target_user uuid)
+returns boolean language plpgsql security definer set search_path = public as $$
+declare hid uuid;
+begin
+  if auth.uid() is null then raise exception 'Not signed in'; end if;
+  select household_id into hid from public.corvus_household_members where user_id=auth.uid() and role='owner' limit 1;
+  if hid is null then raise exception 'Only the household owner can transfer ownership'; end if;
+  if target_user=auth.uid() then raise exception 'Choose another household member'; end if;
+  if not exists(select 1 from public.corvus_household_members where household_id=hid and user_id=target_user and role='member') then raise exception 'Household member was not found'; end if;
+  update public.corvus_households set owner_id=target_user where id=hid;
+  update public.corvus_household_members set role='member' where household_id=hid and user_id=auth.uid();
+  update public.corvus_household_members set role='owner' where household_id=hid and user_id=target_user;
+  return true;
+end;
+$$;
+
 create or replace function public.corvus_delete_household(confirm_name text)
 returns boolean language plpgsql security definer set search_path = public as $$
 declare hid uuid; current_name text;
 begin
   if auth.uid() is null then raise exception 'Not signed in'; end if;
-  select h.id,h.name into hid,current_name
-  from public.corvus_households h
-  join public.corvus_household_members m on m.household_id=h.id
-  where m.user_id=auth.uid() and m.role='owner' and h.owner_id=auth.uid()
-  limit 1;
+  select h.id,h.name into hid,current_name from public.corvus_households h join public.corvus_household_members m on m.household_id=h.id where m.user_id=auth.uid() and m.role='owner' and h.owner_id=auth.uid() limit 1;
   if hid is null then raise exception 'Only the household owner can delete this household'; end if;
-  if trim(coalesce(confirm_name,'')) <> current_name then raise exception 'Household name does not match'; end if;
+  if trim(coalesce(confirm_name,''))<>current_name then raise exception 'Household name does not match'; end if;
   delete from public.corvus_households where id=hid;
   return true;
 end;
@@ -114,4 +157,4 @@ create policy "Members can update household state" on public.corvus_household_st
 
 grant select on public.corvus_households, public.corvus_household_members, public.corvus_household_invites, public.corvus_household_state to authenticated;
 grant insert, update on public.corvus_household_state to authenticated;
-grant execute on function public.corvus_create_household(text), public.corvus_create_invite(), public.corvus_join_household(text), public.corvus_delete_household(text), public.corvus_is_household_member(uuid) to authenticated;
+grant execute on function public.corvus_create_household(text), public.corvus_create_invite(), public.corvus_join_household(text), public.corvus_leave_household(), public.corvus_remove_household_member(uuid), public.corvus_transfer_household_ownership(uuid), public.corvus_delete_household(text), public.corvus_is_household_member(uuid) to authenticated;
